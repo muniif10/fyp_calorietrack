@@ -1,0 +1,15 @@
+cheesecake
+donuts
+french_fries
+fried_rice
+hamburger
+ice_cream
+karipap
+nasi_dagang
+nasi_kandar
+nasi_lemak
+pisang_goreng
+pizza
+spaghetti_bolognese
+spaghetti_carbonara
+waffles
