@@ -19,39 +19,51 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         key: scaffoldKey,
-        drawer: Drawer(
-          child: Container(
-            child: ListView.builder(
-              itemCount: 2,
-              itemBuilder: (context, index) => ListTile(
-                title: Text("Hi"),
-              ),
-            ),
-          ),
-        ),
-        appBar: AppBar(backgroundColor: Colors.blue[300],
-          centerTitle: true,
-          title: Text("CalTrac"),
-          leading: IconButton(
-              onPressed: () {
-                scaffoldKey.currentState?.openDrawer();
-              },
-              icon: const Icon(Icons.menu)),
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.person),
-            )
-          ],
-        ),
-        backgroundColor: Colors.grey[100],
+        // drawer: Drawer(
+        //   child: Column(
+        //     mainAxisAlignment: MainAxisAlignment.end,
+        //     children: [
+        //       ListTile(onTap: () => {},
+        //       minTileHeight: 88,
+        //         title: Text("Home"),
+        //         leading: Icon(Icons.home),
+        //       ),
+        //       ListTile(onTap: () => {},
+        //       minTileHeight: 88,
+        //         title: Text("Statistics"),
+        //         leading: Icon(Icons.auto_graph),
+        //       ),
+
+        //       ListTile(onTap: () => {},
+        //       minTileHeight: 88,
+        //         title: Text("Settings"),
+        //         leading: Icon(Icons.settings),
+        //       ),
+        //     ],
+        //   ),
+        // ),
+        // appBar: AppBar(
+        //   elevation: 0,
+        //   backgroundColor: Colors.transparent,
+        //   centerTitle: true,
+        //   leading: IconButton(
+        //       onPressed: () {
+        //         scaffoldKey.currentState?.openDrawer();
+        //       },
+        //       icon: const Icon(Icons.menu)),
+        //   actions: [
+        //     IconButton(
+        //       onPressed: () {},
+        //       icon: Icon(Icons.person),
+        //     )
+        //   ],
+        // ),
+        
         body: HomePage(),
       ),
     );
   }
 }
-
-
 
 class Home extends StatefulWidget {
   const Home({
