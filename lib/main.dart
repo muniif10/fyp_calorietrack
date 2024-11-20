@@ -6,19 +6,51 @@ import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 
+import '../ui/const.dart';
+
 void main() {
   runApp(MainApp());
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   MainApp({super.key});
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  void handleBottomNavigation(int value) {}
+
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  int pageIndex = 0;
+
   @override
   Widget build(BuildContext context) {
+    BottomNavigationBar bottomNavigationBar = BottomNavigationBar(
+      onTap: (int index) {
+        setState(() {
+          pageIndex = index;
+        });
+      },
+      currentIndex: pageIndex,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: "Home",
+        ),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+      ],
+    );
     return MaterialApp(
+      theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue[600]!)),
+      color: Colors.blue[400],
       debugShowCheckedModeBanner: false,
       home: SafeArea(
         child: Scaffold(
+          bottomNavigationBar: bottomNavigationBar,
           key: scaffoldKey,
           // drawer: Drawer(
           //   child: Column(
@@ -34,7 +66,7 @@ class MainApp extends StatelessWidget {
           //         title: Text("Statistics"),
           //         leading: Icon(Icons.auto_graph),
           //       ),
-        
+
           //       ListTile(onTap: () => {},
           //       minTileHeight: 88,
           //         title: Text("Settings"),
@@ -59,11 +91,25 @@ class MainApp extends StatelessWidget {
           //     )
           //   ],
           // ),
-          
-          body: HomePage(),
+
+          body: AnimatedSwitcher(
+            duration: Duration(milliseconds: 300),
+            child: _getPageForIndex(pageIndex),
+          ),
         ),
       ),
     );
+  }
+}
+
+Widget _getPageForIndex(int pageIndex) {
+  switch (pageIndex) {
+    case 0:
+      return HomePage(key: ValueKey(0));
+    case 1:
+      return inference_page(key: ValueKey(1));
+    default:
+      return HomePage(key: ValueKey(-1));
   }
 }
 
@@ -95,141 +141,11 @@ class _HomeState extends State<Home> {
     );
   }
 
-  ImageClassificationHelper? imageClassificationHelper;
-  final imagePicker = ImagePicker();
-  String? imagePath;
-  img.Image? image;
-  Map<String, double>? classification;
-  bool cameraIsAvailable = Platform.isAndroid;
-
-  @override
-  void initState() {
-    imageClassificationHelper = ImageClassificationHelper();
-    imageClassificationHelper!.initHelper();
-    super.initState();
-  }
-
-  void cleanResult() {
-    imagePath = null;
-    image = null;
-    classification = null;
-    setState(() {});
-  }
-
-  // Process picked image
-  Future<void> processImage() async {
-    if (imagePath != null) {
-      // Read image bytes from file
-      final imageData = File(imagePath!).readAsBytesSync();
-
-      // Decode image using package:image/image.dart (https://pub.dev/image)
-      image = img.decodeImage(imageData);
-      setState(() {});
-      classification = await imageClassificationHelper?.inferenceImage(image!);
-      setState(() {});
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    if (cameraIsAvailable)
-                      TextButton.icon(
-                        onPressed: () async {
-                          cleanResult();
-                          final result = await imagePicker.pickImage(
-                            source: ImageSource.camera,
-                          );
-
-                          imagePath = result?.path;
-                          setState(() {});
-                          processImage();
-                        },
-                        icon: const Icon(
-                          Icons.camera,
-                          size: 48,
-                        ),
-                        label: const Text("Camera"),
-                      ),
-                    TextButton.icon(
-                      onPressed: () async {
-                        cleanResult();
-                        final result = await imagePicker.pickImage(
-                          source: ImageSource.gallery,
-                        );
-
-                        imagePath = result?.path;
-
-                        processImage();
-                        setState(() {});
-                      },
-                      icon: const Icon(
-                        Icons.photo,
-                        size: 48,
-                      ),
-                      label: const Text("Gallery"),
-                    ),
-                  ],
-                ),
-                const Divider(color: Colors.black),
-                Column(
-                  children: [
-                    if (imagePath != null)
-                      Image.file(
-                        File(imagePath!),
-                        width: 200,
-                      ),
-                    if (image == null)
-                      const Text(
-                          "Take a photo or choose one from the gallery to "
-                          "inference."),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Show classification result
-                        SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              if (classification != null)
-                                ...(classification!.entries.toList()
-                                      ..sort(
-                                        (a, b) => a.value.compareTo(b.value),
-                                      ))
-                                    .reversed
-                                    .take(10)
-                                    .map(
-                                      (e) => Container(
-                                        padding: const EdgeInsets.all(8),
-                                        color: Colors.white,
-                                        child: Row(
-                                          children: [
-                                            Text(e.key),
-                                            const Spacer(),
-                                            Text(e.value.toStringAsFixed(2))
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
+      child: Placeholder(),
     );
   }
 }
