@@ -17,49 +17,51 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        key: scaffoldKey,
-        // drawer: Drawer(
-        //   child: Column(
-        //     mainAxisAlignment: MainAxisAlignment.end,
-        //     children: [
-        //       ListTile(onTap: () => {},
-        //       minTileHeight: 88,
-        //         title: Text("Home"),
-        //         leading: Icon(Icons.home),
-        //       ),
-        //       ListTile(onTap: () => {},
-        //       minTileHeight: 88,
-        //         title: Text("Statistics"),
-        //         leading: Icon(Icons.auto_graph),
-        //       ),
-
-        //       ListTile(onTap: () => {},
-        //       minTileHeight: 88,
-        //         title: Text("Settings"),
-        //         leading: Icon(Icons.settings),
-        //       ),
-        //     ],
-        //   ),
-        // ),
-        // appBar: AppBar(
-        //   elevation: 0,
-        //   backgroundColor: Colors.transparent,
-        //   centerTitle: true,
-        //   leading: IconButton(
-        //       onPressed: () {
-        //         scaffoldKey.currentState?.openDrawer();
-        //       },
-        //       icon: const Icon(Icons.menu)),
-        //   actions: [
-        //     IconButton(
-        //       onPressed: () {},
-        //       icon: Icon(Icons.person),
-        //     )
-        //   ],
-        // ),
+      home: SafeArea(
+        child: Scaffold(
+          key: scaffoldKey,
+          // drawer: Drawer(
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.end,
+          //     children: [
+          //       ListTile(onTap: () => {},
+          //       minTileHeight: 88,
+          //         title: Text("Home"),
+          //         leading: Icon(Icons.home),
+          //       ),
+          //       ListTile(onTap: () => {},
+          //       minTileHeight: 88,
+          //         title: Text("Statistics"),
+          //         leading: Icon(Icons.auto_graph),
+          //       ),
         
-        body: HomePage(),
+          //       ListTile(onTap: () => {},
+          //       minTileHeight: 88,
+          //         title: Text("Settings"),
+          //         leading: Icon(Icons.settings),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // appBar: AppBar(
+          //   elevation: 0,
+          //   backgroundColor: Colors.transparent,
+          //   centerTitle: true,
+          //   leading: IconButton(
+          //       onPressed: () {
+          //         scaffoldKey.currentState?.openDrawer();
+          //       },
+          //       icon: const Icon(Icons.menu)),
+          //   actions: [
+          //     IconButton(
+          //       onPressed: () {},
+          //       icon: Icon(Icons.person),
+          //     )
+          //   ],
+          // ),
+          
+          body: HomePage(),
+        ),
       ),
     );
   }

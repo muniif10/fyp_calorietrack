@@ -68,64 +68,79 @@ class Indicator extends StatelessWidget {
 
 class InformationCard extends StatelessWidget {
   final Widget content;
+  final String title;
 
   const InformationCard({
     super.key,
     required this.content,
+    required this.title,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // Access theme for consistency
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Center(
         child: Container(
           decoration: BoxDecoration(
-              border: Border.all(
-                  color: const Color.fromARGB(161, 151, 201, 255), width: 1),
-              boxShadow: const [
-                BoxShadow(
-                    color: shadownOnPrimaryBackgroundGradient,
-                    blurRadius: 5,
-                    offset: Offset(0, 5),
-                    spreadRadius: 0)
-              ],
-              borderRadius: BorderRadius.circular(8),
-              gradient: LinearGradient(colors: secondaryBackgroundGradient)),
+            border: Border.all(
+              color: const Color.fromARGB(161, 151, 201, 255),
+              width: 1,
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: shadownOnPrimaryBackgroundGradient,
+                blurRadius: 5,
+                offset: Offset(0, 5),
+              ),
+            ],
+            borderRadius: BorderRadius.circular(8),
+            gradient: LinearGradient(
+              colors: secondaryBackgroundGradient,
+            ),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: FractionallySizedBox(
-              heightFactor: .9,
-              widthFactor: .95,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FractionallySizedBox(
-                      widthFactor: 0.4,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min, // Avoid unnecessary height
+                  children: [
+                    // Title Section
+                    FractionallySizedBox(
+                      widthFactor: 1,
                       child: Container(
                         decoration: BoxDecoration(
                             gradient: LinearGradient(
                                 colors: onSecondaryBackgroundGradient),
                             borderRadius: BorderRadius.circular(5)),
-                        child: const Padding(
+                        child: Padding(
                           padding:
                               EdgeInsets.symmetric(vertical: 2, horizontal: 8),
                           child: Text(
-                            "Today's Meal",
+                            title,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
+                            // textAlign: TextAlign.center,
                           ),
                         ),
-                      )),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  content,
-                ],
-              ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    // Content Section
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: content,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -173,104 +188,97 @@ class MealInformartionCard extends StatelessWidget {
               gradient: LinearGradient(colors: secondaryBackgroundGradient)),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: FractionallySizedBox(
-              heightFactor: .9,
-              widthFactor: .95,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FractionallySizedBox(
-                      widthFactor: 0.4,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                colors: onSecondaryBackgroundGradient),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: const Padding(
-                          padding:
-                              EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-                          child: Text(
-                            "Today's Meal",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FractionallySizedBox(
+                    widthFactor: 0.4,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: onSecondaryBackgroundGradient),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: const Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                        child: Text(
+                          "Today's Meal",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
                         ),
-                      )),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  StreamBuilder<List<MealEntry>>(
-                    stream: mealList,
-                    builder: (context, snapshot) {
-                      // Create the list of rows starting with the header row
-                      List<TableRow> rows = [
-                        TableRow(
-                          children: [
-                            Text("Name",
-                                style: TextStyle(
-                                    color: secondaryText,
-                                    fontWeight: FontWeight.bold)),
-                            Text("Daily Cal. (%)",
-                                style: TextStyle(
-                                    color: secondaryText,
-                                    fontWeight: FontWeight.bold)),
-                            Text("Cal. (Cal)",
-                                style: TextStyle(
-                                    color: secondaryText,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ];
+                      ),
+                    )),
+                const SizedBox(
+                  height: 10,
+                ),
+                StreamBuilder<List<MealEntry>>(
+                  stream: mealList,
+                  builder: (context, snapshot) {
+                    // Create the list of rows starting with the header row
+                    List<TableRow> rows = [
+                      TableRow(
+                        children: [
+                          Text("Name",
+                              style: TextStyle(
+                                  color: secondaryText,
+                                  fontWeight: FontWeight.bold)),
+                          Text("Daily Cal. (%)",
+                              style: TextStyle(
+                                  color: secondaryText,
+                                  fontWeight: FontWeight.bold)),
+                          Text("Cal. (Cal)",
+                              style: TextStyle(
+                                  color: secondaryText,
+                                  fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ];
 
-                      // Handle different states of the stream
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        rows.add(
-                          const TableRow(children: [
-                            Text("Loading..."),
-                            Text(""),
-                            Text("")
-                          ]),
-                        );
-                      } else if (snapshot.hasError) {
-                        rows.add(
-                          TableRow(children: [
-                            Text("Error: ${snapshot.error}"),
-                            const Text(""),
-                            const Text("")
-                          ]),
-                        );
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        rows.add(
-                          const TableRow(children: [
-                            Text("No data available"),
-                            Text(""),
-                            Text("")
-                          ]),
-                        );
-                      } else {
-                        // Add a TableRow for each MealEntry item in the snapshot data
-                        rows.addAll(snapshot.data!.map((meal) {
-                          return TableRow(
-                            children: [
-                              Text(meal.foodName),
-                              Text(meal.foodName),
-                              Text(meal.foodName),
-                            ],
-                          );
-                        }).toList());
-                      }
-
-                      // Return the Table with the rows
-                      return Table(
-                        children: rows,
+                    // Handle different states of the stream
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      rows.add(
+                        const TableRow(
+                            children: [Text("Loading..."), Text(""), Text("")]),
                       );
-                    },
-                  )
-                ],
-              ),
+                    } else if (snapshot.hasError) {
+                      rows.add(
+                        TableRow(children: [
+                          Text("Error: ${snapshot.error}"),
+                          const Text(""),
+                          const Text("")
+                        ]),
+                      );
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      rows.add(
+                        const TableRow(children: [
+                          Text("No data available"),
+                          Text(""),
+                          Text("")
+                        ]),
+                      );
+                    } else {
+                      // Add a TableRow for each MealEntry item in the snapshot data
+                      rows.addAll(snapshot.data!.map((meal) {
+                        return TableRow(
+                          children: [
+                            Text(meal.foodName),
+                            Text(meal.foodName),
+                            Text(meal.foodName),
+                          ],
+                        );
+                      }).toList());
+                    }
+
+                    // Return the Table with the rows
+                    return Table(
+                      children: rows,
+                    );
+                  },
+                )
+              ],
             ),
           ),
         ),
@@ -297,34 +305,37 @@ class PieChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get the screen height
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Container(
-    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
-    padding: const EdgeInsets.all(8.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text(
-            "Today's Meal Nutrients",
-            style: TextStyle(fontWeight: FontWeight.w900, fontSize: 24),
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          // Title Section
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              "Today's Meal Nutrients",
+              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 24),
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            // Pie Chart Section
-            Flexible(
-              flex: 3,
-              child: AspectRatio(
-                aspectRatio: 1,
+          const SizedBox(height: 16),
+
+          Row(
+            children: [
+              SizedBox(
+                height: 150,
+                width: 200,
                 child: PieChart(
                   swapAnimationCurve: Curves.easeInOutCirc,
                   swapAnimationDuration: const Duration(milliseconds: 300),
                   PieChartData(
                     borderData: FlBorderData(show: true),
                     sectionsSpace: 0,
-                    centerSpaceRadius: 50,
+                    centerSpaceRadius: 25,
                     sections: sections,
                     pieTouchData: PieTouchData(
                       touchCallback: (FlTouchEvent event, pieTouchResponse) {
@@ -334,37 +345,74 @@ class PieChartWidget extends StatelessWidget {
                           onTouchedIndexChanged(-1);
                           return;
                         }
-                        final newIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
-                        onTouchedIndexChanged(newIndex == touchedIndex ? -1 : newIndex);
+                        final newIndex = pieTouchResponse
+                            .touchedSection!.touchedSectionIndex;
+                        onTouchedIndexChanged(
+                            newIndex == touchedIndex ? -1 : newIndex);
                       },
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(width: 16),
-            // Indicator Section
-            Flexible(
-              flex: 2,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Indicator(color: carbColor, text: 'Carbohydrate', isSquare: true),
-                  const SizedBox(height: 4),
-                  Indicator(color: proteinColor, text: 'Protein', isSquare: true),
-                  const SizedBox(height: 4),
-                  Indicator(color: fatColor, text: 'Fat', isSquare: true),
-                  const SizedBox(height: 4),
-                  Indicator(color: fibreColor, text: 'Fibre', isSquare: true),
-                ],
+              Expanded(
+                flex: 2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Indicator(
+                        color: carbColor, text: 'Carbohydrate', isSquare: true),
+                    const SizedBox(height: 4),
+                    Indicator(
+                        color: proteinColor, text: 'Protein', isSquare: true),
+                    const SizedBox(height: 4),
+                    Indicator(color: fatColor, text: 'Fat', isSquare: true),
+                    const SizedBox(height: 4),
+                    Indicator(color: fibreColor, text: 'Fibre', isSquare: true),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
+            ],
+          ),
+          // Pie Chart Section
+          // Container(
+          //   height: screenHeight * 0.20, // 15% of the screen height
+          //   child: Row(
+          //     children: [
+          //       // Pie Chart
+          //       Expanded(
+          //         flex: 3,
+          //         child: ,
+          //       ),
+          //       const SizedBox(width: 16),
+          //       // Indicator Section
+          //       Expanded(
+          //         flex: 2,
+          //         child: Column(
+          //           mainAxisAlignment: MainAxisAlignment.start,
+          //           crossAxisAlignment: CrossAxisAlignment.start,
+          //           children: <Widget>[
+          //             Indicator(
+          //                 color: carbColor,
+          //                 text: 'Carbohydrate',
+          //                 isSquare: true),
+          //             const SizedBox(height: 4),
+          //             Indicator(
+          //                 color: proteinColor, text: 'Protein', isSquare: true),
+          //             const SizedBox(height: 4),
+          //             Indicator(color: fatColor, text: 'Fat', isSquare: true),
+          //             const SizedBox(height: 4),
+          //             Indicator(
+          //                 color: fibreColor, text: 'Fibre', isSquare: true),
+          //           ],
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+        ],
+      ),
+    );
   }
 }
 
@@ -406,7 +454,15 @@ class _HomePageState extends State<HomePage> {
             ),
             const Expanded(
               flex: 1,
-              child: InformationCard(content: Text("Hi brothers!"),),
+              child: InformationCard(
+                title: "Today's bullshit",
+                content: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text("Dogshit"),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
