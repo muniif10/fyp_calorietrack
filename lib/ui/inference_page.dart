@@ -11,14 +11,14 @@ import 'package:calorie_track/helper/image_classifier_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class inference_page extends StatefulWidget {
-  inference_page({super.key});
+class InferencePage extends StatefulWidget {
+  const InferencePage({super.key});
 
   @override
-  State<inference_page> createState() => _inference_pageState();
+  State<InferencePage> createState() => _InferencePageState();
 }
 
-class _inference_pageState extends State<inference_page> {
+class _InferencePageState extends State<InferencePage> {
   ImageClassificationHelper? imageClassificationHelper;
   final imagePicker = ImagePicker();
   String? imagePath;

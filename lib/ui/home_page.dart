@@ -202,7 +202,7 @@ class MealInformartionCard extends StatelessWidget {
                         padding:
                             EdgeInsets.symmetric(vertical: 2, horizontal: 8),
                         child: Text(
-                          "Today's Meal",
+                          "Meals",
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -455,11 +455,11 @@ class _HomePageState extends State<HomePage> {
             const Expanded(
               flex: 1,
               child: InformationCard(
-                title: "Today's bullshit",
+                title: "Nutrient",
                 content: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text("Dogshit"),
+                    Text("SDOSDKOSDK"),
                   ],
                 ),
               ),
