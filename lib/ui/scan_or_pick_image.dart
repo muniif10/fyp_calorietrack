@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:calorie_track/helper/image_classifier_helper.dart';
+import 'package:calorie_track/helper/logger.dart';
 import 'package:calorie_track/ui/const.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +23,45 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
 
+  ImageClassificationHelper? imageClassificationHelper;
+
+  void cleanResult() {
+    imagePath = null;
+    image = null;
+    classification = null;
+    setState(() {});
+  }
+
+  void takePicture() async {
+    try {
+      await _initializeControllerFuture;
+      final cameraImage = await _controller.takePicture();
+      imagePath = cameraImage.path;
+    } catch (e) {
+      AppLogger.instance.e("Error at taking picture", error: e);
+    }
+  }
+
+  // Process picked image
+  Future<void> processImage() async {
+    if (imagePath != null) {
+      // Read image bytes from file
+      final imageData = File(imagePath!).readAsBytesSync();
+
+      // Decode image using package:image/image.dart (https://pub.dev/image)
+      image = img.decodeImage(imageData);
+      setState(() {});
+      classification = await imageClassificationHelper?.inferenceImage(image!);
+      setState(() {});
+    }
+  }
+
   @override
   void initState() {
+    super.initState();
+
+    imageClassificationHelper = ImageClassificationHelper();
+    imageClassificationHelper!.initHelper();
     super.initState();
 
     // Initialize the camera controller if cameras are available
@@ -111,8 +150,8 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
                                     colors: secondaryBackgroundGradient,
                                   ),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(8.0),
                                   child: Text(
                                     "Align the food within camera view.",
                                     textAlign: TextAlign
@@ -133,19 +172,29 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                            child: IconButton.filled(
-                          onPressed: () {},
-                          icon: Icon(Icons.camera_enhance_sharp),
-                          iconSize: 70,
-                        )),
-                        Divider(
+                        IconButton.filled(
+                          onPressed: () async {
+                            takePicture();
+                            await processImage();
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddFoodPage(
+                                      classification: classification,
+                                      imagePath: imagePath),
+                                ));
+                          },
+                          icon: const Icon(Icons.camera_enhance_sharp),
+                          iconSize: 40,
+                          padding: const EdgeInsets.all(20),
+                        ),
+                        const Divider(
                           indent: 100,
                           endIndent: 100,
                         ),
                         TextButton(
                             onPressed: () {},
-                            child: Text("Pick food image from gallery?"))
+                            child: const Text("Choose image from gallery"))
                       ],
                     ),
                   )
@@ -159,6 +208,44 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
             return const Center(child: CircularProgressIndicator());
           }
         },
+      ),
+    );
+  }
+}
+
+class AddFoodPage extends StatelessWidget {
+  const AddFoodPage({super.key, this.classification, this.imagePath});
+  final Map<String, double>? classification;
+  final String? imagePath;
+
+  List<MapEntry<String, double>> sortClassification(
+      Map<String, double>? classification) {
+    if (classification == null) {
+      return []; // Return an empty list if the map is null
+    }
+
+    // Sort the map by values in descending order and return the sorted list
+    var sortedList = classification.entries.toList()
+      ..sort((a, b) =>
+          b.value.compareTo(a.value)); // Compare the values in descending order
+
+    return sortedList;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<MapEntry<String, double>> sortedListClassification =
+        sortClassification(classification);
+    return Scaffold(
+      body: SafeArea(
+        child: PageView(
+          children: [
+            // Take 3 of the likely food
+            ...sortedListClassification.take(3).map((entry) {
+              return Text("${entry.key} ${entry.value}");
+            })
+          ],
+        ),
       ),
     );
   }

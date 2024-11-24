@@ -1,21 +1,15 @@
-import 'package:calorie_track/helper/image_classifier_helper.dart';
 import 'package:calorie_track/ui/home_page.dart';
-import 'package:calorie_track/ui/inference_page.dart';
 import 'package:calorie_track/ui/scan_or_pick_image.dart';
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image/image.dart' as img;
-import 'package:image_picker/image_picker.dart';
 
-import '../ui/const.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MainApp());
+  runApp(const MainApp());
 }
 
 class MainApp extends StatefulWidget {
-  MainApp({super.key});
+  const MainApp({super.key});
 
   @override
   State<MainApp> createState() => _MainAppState();
@@ -64,7 +58,7 @@ class _MainAppState extends State<MainApp> {
           bottomNavigationBar: bottomNavigationBar,
           key: scaffoldKey,
           body: AnimatedSwitcher(
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             child: _getPageForIndex(pageIndex),
           ),
         ),
@@ -76,11 +70,11 @@ class _MainAppState extends State<MainApp> {
 Widget _getPageForIndex(int pageIndex) {
   switch (pageIndex) {
     case 0:
-      return HomePage(key: ValueKey(0));
+      return const HomePage(key: ValueKey(0));
     case 1:
-      return ScanOrPickImagePage(key: ValueKey(1));
+      return const ScanOrPickImagePage(key: ValueKey(1));
     default:
-      return HomePage(key: ValueKey(-1));
+      return const HomePage(key: ValueKey(-1));
   }
 }
 
@@ -103,18 +97,18 @@ class _HomeState extends State<Home> {
         ),
         behavior: SnackBarBehavior.floating,
         showCloseIcon: true,
-        shape: StadiumBorder(),
+        shape: const StadiumBorder(),
         backgroundColor: Colors.green[800],
-        padding: EdgeInsets.all(15),
-        margin: EdgeInsets.all(30),
-        duration: Duration(seconds: 5),
+        padding: const EdgeInsets.all(15),
+        margin: const EdgeInsets.all(30),
+        duration: const Duration(seconds: 5),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return const SafeArea(
       child: Placeholder(),
     );
   }

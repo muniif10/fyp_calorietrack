@@ -1,14 +1,8 @@
 import 'dart:io';
 import 'package:calorie_track/helper/image_classifier_helper.dart';
 import 'package:calorie_track/ui/const.dart';
-import 'package:calorie_track/ui/home_page.dart';
-import 'package:calorie_track/ui/inference_page.dart';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
-import 'package:image_picker/image_picker.dart';
-import 'package:calorie_track/helper/image_classifier_helper.dart';
-import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class InferencePage extends StatefulWidget {
@@ -25,7 +19,6 @@ class _InferencePageState extends State<InferencePage> {
   img.Image? image;
   Map<String, double>? classification;
   bool cameraIsAvailable = Platform.isAndroid;
-
   @override
   void initState() {
     imageClassificationHelper = ImageClassificationHelper();
@@ -113,7 +106,7 @@ class _InferencePageState extends State<InferencePage> {
                       ),
                     ],
                   ),
-                  Divider(),
+                  const Divider(),
                   Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25),

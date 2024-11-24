@@ -120,13 +120,6 @@ List<List<List<List<double>>>> convertImageToInputMatrix(image_lib.Image image, 
       double maxScore = result.reduce((a, b) => a + b);
       // Set classification map {label: points}
       var classification = <String, double>{};
-      List<double> softmax(List<double> logits) {
-        double maxLogit = logits.reduce((a, b) => a > b ? a : b);
-        List<double> exps =
-            logits.map((logit) => exp(logit - maxLogit)).toList();
-        double sumExps = exps.reduce((a, b) => a + b);
-        return exps.map((exp) => exp / sumExps).toList();
-      }
 
       // final probabilities = softmax(result);
 

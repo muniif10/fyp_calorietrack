@@ -78,7 +78,7 @@ class InformationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context); // Access theme for consistency
+    Theme.of(context); // Access theme for consistency
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -119,10 +119,10 @@ class InformationCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(5)),
                         child: Padding(
                           padding:
-                              EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                              const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
                           child: Text(
                             title,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold),
@@ -306,7 +306,6 @@ class PieChartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Get the screen height
-    final screenHeight = MediaQuery.of(context).size.height;
 
     return Container(
       padding: const EdgeInsets.all(8.0),

@@ -19,6 +19,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:calorie_track/helper/isolated_inference_helper.dart';
+import 'package:calorie_track/helper/logger.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart';
@@ -59,7 +60,7 @@ class ImageClassificationHelper {
     interpreter = await Interpreter.fromAsset(modelPath, options: options);
     // Get tensor input shape [1, 224, 224, 3]
     inputTensor = interpreter.getInputTensors().first;
-    print(inputTensor);
+    AppLogger.instance.d(inputTensor);
     // Get tensor output shape [1, 1001]
     outputTensor = interpreter.getOutputTensors().first;
 
