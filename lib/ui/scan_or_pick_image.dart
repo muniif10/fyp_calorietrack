@@ -222,17 +222,17 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
         ),
         Positioned.fill(
             child: AnimatedSwitcher(
-          duration: Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 200),
           child: _isLoading
               ? BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                   child: Container(
                       color: Colors.black54,
-                      child: Center(
+                      child: const Center(
                         child: CircularProgressIndicator(),
                       )),
                 )
-              : SizedBox(),
+              : const SizedBox(),
         ))
       ],
     );
