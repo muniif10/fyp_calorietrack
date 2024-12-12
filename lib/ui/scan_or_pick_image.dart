@@ -1,6 +1,11 @@
+import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:ui';
+import 'package:image_picker/image_picker.dart';
 
+import 'package:calorie_track/helper/enums.dart';
+import 'package:http/http.dart' as http;
 import 'package:calorie_track/helper/image_classifier_helper.dart';
 import 'package:calorie_track/helper/logger.dart';
 import 'package:calorie_track/ui/add_food_page.dart';
@@ -18,6 +23,7 @@ class ScanOrPickImagePage extends StatefulWidget {
 
 class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
   String? imagePath;
+  final imagePicker = ImagePicker();
   img.Image? image;
   Map<String, double>? classification;
   bool cameraIsAvailable = Platform.isAndroid || Platform.isIOS;
@@ -37,33 +43,87 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
 
   Future<void> takePicture() async {
     try {
-    await _initializeControllerFuture;
-    final cameraImage = await _controller.takePicture();
-    imagePath = cameraImage.path;
-
+      await _initializeControllerFuture;
+      final cameraImage = await _controller.takePicture();
+      imagePath = cameraImage.path;
     } catch (e) {
       AppLogger.instance.e("Error at taking picture", error: e);
     }
   }
 
   // Process picked image
-  Future<void> processImage() async {
+  Future<int> processImage() async {
+    // returns -1 if API is inaccessible
+    // returns 0 if api returns result
     if (imagePath != null) {
-      // Read image bytes from file
-      final imageData = File(imagePath!).readAsBytesSync();
+      // Step 2: Create a multipart request using the correct key name expected by the server
+      var uri = Uri.parse(
+          'https://api.muniza.fyi/infer/'); // Replace with your API URL
+      var request =
+          http.MultipartRequest('POST', uri); // Assuming the method is POST
+      // Step 3: Add the image to the request with the correct key name
+      // If the API expects the key 'image', use that here.
+      var imageFile = await http.MultipartFile.fromPath(
+          'image', imagePath!); // 'image' is the key here
+      request.files.add(imageFile);
+      request.headers["X-API-KEY"] = "myapp_key";
 
-      // Decode image using package:image/image.dart (https://pub.dev/image)
-      image = img.decodeImage(imageData);
-      classification = await imageClassificationHelper?.inferenceImage(image!);
+      // Optional: Add other fields if needed by the API
+      // request.fields['key'] = 'value';
+
+      // Step 4: Send the request
+      try {
+        var streamedResponse = await request.send();
+
+        // Step 5: Check the response status code
+        if (streamedResponse.statusCode == 200) {
+          // Step 6: Read the response body
+          var responseBody = await streamedResponse.stream.bytesToString();
+
+          // Parse the response body to a Map<String, dynamic>
+          Map<String, dynamic> responseMap = jsonDecode(responseBody);
+
+          // Extract the predictions list from the response
+          var predictions = responseMap['predictions'];
+
+          // Check if predictions is not empty and is a list of lists
+          if (predictions != null &&
+              predictions is List &&
+              predictions.isNotEmpty) {
+            // Flatten the predictions (the inner list is a single list of numbers)
+            List<double> predictionValues = List<double>.from(predictions[0]);
+
+            classification = await getSortedPredictionMap(predictionValues);
+            return 0;
+          }
+        } else {
+          // Log the error and the response body for debugging
+          var responseBody = await streamedResponse.stream.bytesToString();
+          // print('Upload failed. Status Code: ${streamedResponse.statusCode}');
+          return -1;
+          // print('Response Body: $responseBody');
+        }
+      } catch (e) {
+        // Catch any errors that might occur during the request
+        // print('Error during request: $e');
+      }
+
+      // // Read image bytes from file
+      // final imageData = File(imagePath!).readAsBytesSync();
+
+      // // Decode image using package:image/image.dart (https://pub.dev/image)
+      // image = img.decodeImage(imageData);
+      // classification = await imageClassificationHelper?.inferenceImage(image!);
     }
+    return -1;
   }
 
   @override
   void initState() {
     super.initState();
 
-    imageClassificationHelper = ImageClassificationHelper();
-    imageClassificationHelper!.initHelper();
+    // imageClassificationHelper = ImageClassificationHelper();
+    // imageClassificationHelper!.initHelper();
     super.initState();
 
     // Initialize the camera controller if cameras are available
@@ -182,10 +242,19 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
                                   _isLoading = true;
                                 });
                                 await takePicture();
-                                await processImage();
+                                var res = await processImage();
                                 setState(() {
                                   _isLoading = false;
                                 });
+                                if (res == -1) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      content: Text("It failed"),
+                                    ),
+                                  );
+                                  return;
+                                }
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -203,7 +272,35 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
                               endIndent: 100,
                             ),
                             TextButton(
-                                onPressed: () {},
+                                onPressed: () async {
+                                  cleanResult();
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
+                                  final result = await imagePicker.pickImage(
+                                      source: ImageSource.gallery);
+                                  imagePath = result?.path;
+                                  var res = await processImage();
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  if (res == -1) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        content: Text("It failed"),
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AddFoodPage(
+                                            classification: classification,
+                                            imagePath: imagePath),
+                                      ));
+                                },
                                 child: const Text("Choose image from gallery"))
                           ],
                         ),

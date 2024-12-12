@@ -2,7 +2,6 @@ import 'package:calorie_track/ui/home_page.dart';
 import 'package:calorie_track/ui/scan_or_pick_image.dart';
 import 'package:flutter/material.dart';
 
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MainApp());
