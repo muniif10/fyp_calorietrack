@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:ui';
 import 'package:image_picker/image_picker.dart';
@@ -98,7 +97,6 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
           }
         } else {
           // Log the error and the response body for debugging
-          var responseBody = await streamedResponse.stream.bytesToString();
           // print('Upload failed. Status Code: ${streamedResponse.statusCode}');
           return -1;
           // print('Response Body: $responseBody');
@@ -238,6 +236,7 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
                           children: [
                             IconButton.filled(
                               onPressed: () async {
+                                cleanResult();
                                 setState(() {
                                   _isLoading = true;
                                 });
@@ -247,21 +246,35 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
                                   _isLoading = false;
                                 });
                                 if (res == -1) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      content: Text("It failed"),
-                                    ),
-                                  );
+                                  if (context.mounted) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text(
+                                            "Connetion Issue Occurred."),
+                                        content: const Text(
+                                            "Please try again in a few seconds."),
+                                        actions: [
+                                          FilledButton.icon(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              label: const Text("Okay"))
+                                        ],
+                                      ),
+                                    );
+                                  }
                                   return;
                                 }
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => AddFoodPage(
-                                          classification: classification,
-                                          imagePath: imagePath),
-                                    ));
+                                if (context.mounted) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AddFoodPage(
+                                            classification: classification,
+                                            imagePath: imagePath),
+                                      ));
+                                }
                               },
                               icon: const Icon(Icons.camera_enhance_sharp),
                               iconSize: 40,
@@ -279,27 +292,47 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
                                   });
                                   final result = await imagePicker.pickImage(
                                       source: ImageSource.gallery);
-                                  imagePath = result?.path;
+                                  if (result == null) {
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                    return;
+                                  }
+                                  imagePath = result.path;
                                   var res = await processImage();
                                   setState(() {
                                     _isLoading = false;
                                   });
                                   if (res == -1) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        content: Text("It failed"),
-                                      ),
-                                    );
+                                    if (context.mounted) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: const Text(
+                                              "Connetion Issue Occurred."),
+                                          content: const Text(
+                                              "Please try again in a few seconds."),
+                                          actions: [
+                                            FilledButton.icon(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                label: const Text("Okay"))
+                                          ],
+                                        ),
+                                      );
+                                    }
                                     return;
                                   }
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => AddFoodPage(
-                                            classification: classification,
-                                            imagePath: imagePath),
-                                      ));
+                                  if (context.mounted) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => AddFoodPage(
+                                              classification: classification,
+                                              imagePath: imagePath),
+                                        ));
+                                  }
                                 },
                                 child: const Text("Choose image from gallery"))
                           ],

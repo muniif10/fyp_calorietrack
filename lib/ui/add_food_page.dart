@@ -36,12 +36,11 @@ class _AddFoodPageState extends State<AddFoodPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Add Meal"),
+        title: const Text("Add Meal"),
       ),
       body: SafeArea(
         child: PageView(
           children: [
-            // Take 3 of the likely food
             ...sortedListClassification.map((entry) {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -58,17 +57,17 @@ class _AddFoodPageState extends State<AddFoodPage> {
                           ),
                         ),
                         Text(getHumanReadableName(entry.key)),
-                        Text(entry.value.roundToDouble().toString())
+                        Text(entry.value.toStringAsFixed(2))
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     Text(labelAttributes[entry.key]!["description"]!),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
-                    Align(
+                    const Align(
                       alignment: Alignment.centerLeft,
                       child: Text("Portion Size"),
                     ),
@@ -88,7 +87,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                         }),
                     Row(
                       children: [
-                        Text("Total calories: "),
+                        const Text("Total calories: "),
                         Text("${totalCalorie.round()} kcal")
                       ],
                     )
