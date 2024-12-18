@@ -1,3 +1,4 @@
+import 'package:calorie_track/helper/logger.dart';
 import 'package:calorie_track/model/meal.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -29,12 +30,12 @@ class DatabaseHelper {
     // Get the path to the database
     String path = join(await getDatabasesPath(), 'my_database.db');
 
-    // Open the database
+    // Open the database and handle the creation or upgrade
     return await openDatabase(
       path,
       version: 1,
       onCreate: (db, version) async {
-        // Example: Create a table
+        // Create the table
         await db.execute('''
           CREATE TABLE food_history(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,41 +43,79 @@ class DatabaseHelper {
             insertion_date TEXT NOT NULL,
             calorie_input REAL,
             portion INT,
-          )
+            image_path TEXT
+          );
         ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < newVersion) {
+          // In case of schema upgrade, handle changes here (if needed)
+          // For instance, drop and recreate the table or modify schema
+          await _dropTable(db);
+          await _createTable(db);
+        }
       },
     );
   }
 
-  Future<int> insertMeal(Meal meal) async {
-  Database db = await instance.database;
-
-  return await db.insert(
-    'food_history',
-    meal.toMap(), // Convert the Meal object to a Map
-    conflictAlgorithm: ConflictAlgorithm.replace, // Handle conflicts (optional)
-  );
-}
-
-
-  // Query method example
-  Future<List<Map<String, dynamic>>> getMeals() async {
-    Database db = await instance.database;
-    return await db.query('food_history');
+  // Function to create the table
+  Future<void> _createTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS food_history(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        food_name TEXT,
+        insertion_date TEXT NOT NULL,
+        calorie_input REAL,
+        portion INT,
+        image_path TEXT
+      );
+    ''');
   }
 
-  Future<int> updateMeal(Meal meal) async {
-    Database db = await instance.database;
+  // Function to drop the 'food_history' table
+  Future<void> _dropTable(Database db) async {
+    try {
+      await db.execute('DROP TABLE IF EXISTS food_history');
+    } catch (e) {
+      AppLogger.instance.e("Error dropping table: $e");
+    }
+  }
 
-    return await db.update(
+  // Function to insert a new meal
+  Future<int> insertMeal(Meal meal) async {
+    Database db = await instance.database;
+    return await db.insert(
       'food_history',
-      meal.toMap(), // Convert the Meal object to a Map
-      where: 'id = ?', // Specify the where condition
-      whereArgs: [meal.id], // Pass the ID as an argument for the query
+      meal.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  // Delete method example
+  // Function to retrieve meals
+  Future<List<Map<String, dynamic>>> getMeals() async {
+    Database db = await instance.database;
+    try {
+      return await db.query('food_history');
+    } on DatabaseException catch (_, e) {
+      AppLogger.instance.e("Error fetching meals: $e");
+      // If the table doesn't exist, recreate it and return an empty list
+      await _createTable(db);  // Recreate the table if it was dropped
+      return [];
+    }
+  }
+
+  // Function to update a meal
+  Future<int> updateMeal(Meal meal, int id) async {
+    Database db = await instance.database;
+    return await db.update(
+      'food_history',
+      meal.toMap(),
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  // Function to delete a meal
   Future<int> deleteMeal(int id) async {
     Database db = await instance.database;
     return await db.delete(
@@ -84,5 +123,11 @@ class DatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  // Function to clear all data (drop the table)
+  void clearData() async {
+    Database db = await instance.database;
+    await _dropTable(db);
   }
 }

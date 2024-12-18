@@ -1,3 +1,4 @@
+import 'package:calorie_track/ui/history_page.dart';
 import 'package:calorie_track/ui/home_page.dart';
 import 'package:calorie_track/ui/scan_or_pick_image.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +45,7 @@ class _MainAppState extends State<MainApp> {
               Icons.switch_access_shortcut_add,
               size: 30,
             )),
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+        BottomNavigationBarItem(icon: Icon(Icons.history), label: "History"),
       ],
     );
     return MaterialApp(
@@ -73,7 +74,7 @@ Widget _getPageForIndex(int pageIndex) {
     case 1:
       return const ScanOrPickImagePage(key: ValueKey(1));
     default:
-      return const HomePage(key: ValueKey(-1));
+      return const HistoryPage(key: ValueKey(2));
   }
 }
 

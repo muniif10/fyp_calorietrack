@@ -1,16 +1,16 @@
 class Meal {
-  final int id;
   final String foodName;
   final String insertionDate;
   final double calorieInput;
   final int portion;
+  final String imagePath;
 
   Meal({
-    required this.id,
     required this.foodName,
     required this.insertionDate,
     required this.calorieInput,
     required this.portion,
+    required this.imagePath,
   }) {
     if (foodName.isEmpty) {
       throw ArgumentError('Food name cannot be empty');
@@ -25,21 +25,21 @@ class Meal {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'food_name': foodName,
       'insertion_date': insertionDate,
       'calorie_input': calorieInput,
       'portion': portion,
+      'image_path': imagePath,
     };
   }
 
   factory Meal.fromMap(Map<String, dynamic> map) {
     return Meal(
-      id: map['id'],
       foodName: map['food_name'],
       insertionDate: map['insertion_date'],
       calorieInput: map['calorie_input'],
       portion: map['portion'],
+      imagePath: map['image_path'],
     );
   }
 }

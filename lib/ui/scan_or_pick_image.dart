@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:calorie_track/helper/enums.dart';
+import 'package:calorie_track/helper/meal_helpers.dart';
 import 'package:http/http.dart' as http;
 import 'package:calorie_track/helper/image_classifier_helper.dart';
 import 'package:calorie_track/helper/logger.dart';
@@ -187,11 +187,17 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
                       Stack(
                         children: [
                           // Camera Preview with border radius
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(25),
-                              child: CameraPreview(_controller),
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    0.6, // Use 40% of the screen height
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(25),
+                                  child: CameraPreview(_controller),
+                                ),
+                              ),
                             ),
                           ),
 

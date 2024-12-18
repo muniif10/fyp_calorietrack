@@ -118,8 +118,8 @@ class InformationCard extends StatelessWidget {
                                 colors: onSecondaryBackgroundGradient),
                             borderRadius: BorderRadius.circular(5)),
                         child: Padding(
-                          padding:
-                              const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 2, horizontal: 8),
                           child: Text(
                             title,
                             style: const TextStyle(
@@ -265,7 +265,7 @@ class MealInformartionCard extends StatelessWidget {
                         return TableRow(
                           children: [
                             Text(meal.foodName),
-                            Text(meal.foodName),
+                            Text(meal.nutritionList.first.toString()),
                             Text(meal.foodName),
                           ],
                         );
@@ -373,42 +373,6 @@ class PieChartWidget extends StatelessWidget {
               ),
             ],
           ),
-          // Pie Chart Section
-          // Container(
-          //   height: screenHeight * 0.20, // 15% of the screen height
-          //   child: Row(
-          //     children: [
-          //       // Pie Chart
-          //       Expanded(
-          //         flex: 3,
-          //         child: ,
-          //       ),
-          //       const SizedBox(width: 16),
-          //       // Indicator Section
-          //       Expanded(
-          //         flex: 2,
-          //         child: Column(
-          //           mainAxisAlignment: MainAxisAlignment.start,
-          //           crossAxisAlignment: CrossAxisAlignment.start,
-          //           children: <Widget>[
-          //             Indicator(
-          //                 color: carbColor,
-          //                 text: 'Carbohydrate',
-          //                 isSquare: true),
-          //             const SizedBox(height: 4),
-          //             Indicator(
-          //                 color: proteinColor, text: 'Protein', isSquare: true),
-          //             const SizedBox(height: 4),
-          //             Indicator(color: fatColor, text: 'Fat', isSquare: true),
-          //             const SizedBox(height: 4),
-          //             Indicator(
-          //                 color: fibreColor, text: 'Fibre', isSquare: true),
-          //           ],
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
         ],
       ),
     );
@@ -417,7 +381,7 @@ class PieChartWidget extends StatelessWidget {
 
 class _HomePageState extends State<HomePage> {
   int touchedIndex = -1;
-  Stream<List<MealEntry>> mealList = getMealListStream();
+  Stream<List<MealEntry>> mealList = getMealListStream().asBroadcastStream();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -428,25 +392,6 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-              flex: 1,
-              child: PieChartWidget(
-                sections: showingSections(),
-                touchedIndex: touchedIndex,
-                onTouchedIndexChanged: (newIndex) {
-                  setState(() {
-                    touchedIndex = newIndex!;
-                  });
-                },
-              ),
-            ),
-            const Divider(
-              thickness: 2,
-              color: Color.fromARGB(51, 63, 81, 181),
-              indent: 25,
-              endIndent: 25,
-              height: 0,
-            ),
             Expanded(
               flex: 1,
               child: MealInformartionCard(mealList: mealList),
