@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class MealsEatenCard extends StatelessWidget {
   final Future<List<Meal>> mealsFuture;
-  MealsEatenCard({
+  const MealsEatenCard({
     super.key,
     required this.mealsFuture,
   });

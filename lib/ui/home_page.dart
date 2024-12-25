@@ -1,10 +1,7 @@
 import 'package:calorie_track/helper/database.dart';
 import 'package:calorie_track/helper/logger.dart';
-import 'package:calorie_track/helper/meal_helpers.dart';
 import 'package:calorie_track/model/meal.dart';
 import 'package:calorie_track/ui/cards/meals_eaten_card.dart';
-import 'package:calorie_track/ui/cards/nutrition_card.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -92,7 +89,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Home"),
+        title: const Text("Home"),
         backgroundColor: secondaryBackgroundGradient[0],
       ),
       body: SingleChildScrollView(
@@ -107,10 +104,10 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                  child: MealsEatenCard(mealsFuture: mealHistoryFuture),
                   height: 200,
+                  child: MealsEatenCard(mealsFuture: mealHistoryFuture),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 // NutritionCard(mealsFuture: mealHistoryFuture),

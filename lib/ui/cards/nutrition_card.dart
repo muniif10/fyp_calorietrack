@@ -12,6 +12,6 @@ class NutritionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
 
-    return Placeholder();
+    return const Placeholder();
   }
 }

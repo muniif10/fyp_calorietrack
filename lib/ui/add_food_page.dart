@@ -6,7 +6,7 @@ import 'package:calorie_track/model/meal.dart';
 import 'package:flutter/material.dart';
 
 class AddFoodPage extends StatefulWidget {
-  AddFoodPage({super.key, this.classification, this.imagePath});
+  const AddFoodPage({super.key, this.classification, this.imagePath});
   final Map<String, double>? classification;
   final String? imagePath;
 
@@ -113,15 +113,15 @@ class _AddFoodPageState extends State<AddFoodPage> {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: Text("Incomplete details"),
+                                title: const Text("Incomplete details"),
                                 content:
-                                    Text("Please select the portion size."),
+                                    const Text("Please select the portion size."),
                                 actions: [
                                   TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
-                                      child: Text("Close"))
+                                      child: const Text("Close"))
                                 ],
                               ),
                             );

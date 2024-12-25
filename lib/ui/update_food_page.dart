@@ -6,7 +6,7 @@ import 'package:calorie_track/model/meal.dart';
 import 'package:flutter/material.dart';
 
 class AddFoodPage extends StatefulWidget {
-  AddFoodPage({super.key, this.classification, this.imagePath});
+  const AddFoodPage({super.key, this.classification, this.imagePath});
   final Map<String, double>? classification;
   final String? imagePath;
 
