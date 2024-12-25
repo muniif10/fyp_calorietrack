@@ -109,6 +109,24 @@ class _AddFoodPageState extends State<AddFoodPage> {
                     // ),
                     ElevatedButton(
                         onPressed: () {
+                          if (totalCalorie <= 0) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text("Incomplete details"),
+                                content:
+                                    Text("Please select the portion size."),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("Close"))
+                                ],
+                              ),
+                            );
+                            return;
+                          }
                           addMeal(entry, portionSliderValue.toInt(),
                               totalCalorie, widget.imagePath!);
                           Navigator.of(context).pop();
