@@ -104,9 +104,9 @@ class _AddFoodPageState extends State<AddFoodPage> {
                         Text("${totalCalorie.round()} kcal")
                       ],
                     ),
-                    const Expanded(
-                      child: SizedBox(),
-                    ),
+                    // const Expanded(
+                    //   child: SizedBox(),
+                    // ),
                     ElevatedButton(
                         onPressed: () {
                           addMeal(entry, portionSliderValue.toInt(),
