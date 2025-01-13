@@ -1,17 +1,16 @@
-
-// Assuming this is your labels list (from labels.txt)
+// Assuming this is your updated labels list (from labels.txt)
 final List<String> labels = [
+  "laksa_penang",
+  "laksa_terengganu",
+  "nasi_dagang",
+  "nasi_kerabu",
+  "nasi_lemak",
   "cheesecake",
-  "donuts",
-  "french_fries",
+  "chicken_curry",
+  "dumplings",
   "fried_rice",
   "hamburger",
-  "ice_cream",
-  "karipap",
-  "nasi_dagang",
-  "nasi_kandar",
-  "nasi_lemak",
-  "pisang_goreng",
+  "pancakes",
   "pizza",
   "spaghetti_bolognese",
   "spaghetti_carbonara",
@@ -20,88 +19,119 @@ final List<String> labels = [
 
 // Function to convert the label into a human-readable name
 String getHumanReadableName(String label) {
-  // Convert label like 'nasi_lemak' into 'Nasi Lemak'
+  // Convert label like 'laksa_penang' into 'Laksa Penang'
   return label.split('_').map((word) => word[0].toUpperCase() + word.substring(1)).join(' ');
 }
 
 // Add attributes associated with each label (e.g., categories, descriptions, calories, etc.)
 Map<String, Map<String, String>> labelAttributes = {
-  "cheesecake": {
-    "category": "Dessert",
-    "description": "A sweet dessert made from cream cheese.",
-    "calories": "321",
-  },
-  "donuts": {
-    "category": "Snack",
-    "description": "A fried dough confectionery, often sweetened.",
-    "calories": "452",
-  },
-  "french_fries": {
-    "category": "Snack",
-    "description": "Deep-fried potato slices.",
-    "calories": "365",
-  },
-  "fried_rice": {
+  "laksa_penang": {
     "category": "Main",
-    "description": "Rice stir-fried with vegetables and meat.",
-    "calories": "130",
+    "description": "A spicy and tangy noodle soup from Penang with a rich tamarind base.",
+    "calories": "430",
+    "density": "1.0", // g/mL
+    "caloriesPerGram": "2.16", // Cal/g
   },
-  "hamburger": {
+  "laksa_terengganu": {
     "category": "Main",
-    "description": "A ground beef patty in a bun.",
-    "calories": "250",
-  },
-  "ice_cream": {
-    "category": "Dessert",
-    "description": "A frozen dessert made from dairy products.",
-    "calories": "207",
-  },
-  "karipap": {
-    "category": "Snack",
-    "description": "A Malay pastry filled with curried potatoes.",
-    "calories": "250",
+    "description": "A type of laksa from Terengganu, served with rice noodles and a rich fish-based broth.",
+    "calories": "380",
+    "density": "1.0", // g/mL
+    "caloriesPerGram": "1.76", // Cal/g
   },
   "nasi_dagang": {
     "category": "Main",
     "description": "A Malaysian rice dish served with fish and coconut.",
     "calories": "158",
+    "density": "0.8", // g/mL
+    "caloriesPerGram": "2.04", // Cal/g
   },
-  "nasi_kandar": {
+  "nasi_kerabu": {
     "category": "Main",
-    "description": "A Malaysian rice dish served with curries.",
-    "calories": "210",
+    "description": "A colorful Malaysian rice dish often served with herbs, vegetables, and meat.",
+    "calories": "250",
+    "density": "0.8", // g/mL
+    "caloriesPerGram": "1.04", // Cal/g
   },
   "nasi_lemak": {
     "category": "Main",
-    "description": "A Malaysian rice dish cooked in coconut milk.",
-    "calories": "250",
+    "description": "A Malaysian rice dish cooked in coconut milk, usually served with sambal, egg, and cucumber.",
+    "calories": "587",
+    "density": "0.8", // g/mL
+    "caloriesPerGram": "1.93", // Cal/g
   },
-  "pisang_goreng": {
+  "cheesecake": {
+    "category": "Dessert",
+    "description": "A sweet dessert made from cream cheese.",
+    "calories": "321",
+    "density": "1.2", // g/mL
+    "caloriesPerGram": "2.68", // Cal/g
+  },
+  "chicken_curry": {
+    "category": "Main",
+    "description": "A flavorful dish made with chicken and a mix of spices, often served with rice.",
+    "calories": "320",
+    "density": "1.1", // g/mL
+    "caloriesPerGram": "1.45", // Cal/g
+  },
+  "dumplings": {
     "category": "Snack",
-    "description": "Fried banana, a popular snack in Southeast Asia.",
-    "calories": "150",
+    "description": "Dough-filled parcels often stuffed with meat, vegetables, or seafood.",
+    "calories": "200",
+    "density": "1.0", // g/mL
+    "caloriesPerGram": "2.00", // Cal/g
+  },
+  "fried_rice": {
+    "category": "Main",
+    "description": "Rice stir-fried with vegetables and meat.",
+    "calories": "130",
+    "density": "0.9", // g/mL
+    "caloriesPerGram": "1.44", // Cal/g
+  },
+  "hamburger": {
+    "category": "Main",
+    "description": "A ground beef patty in a bun.",
+    "calories": "250",
+    "density": "1.2", // g/mL
+    "caloriesPerGram": "2.08", // Cal/g
+  },
+  "pancakes": {
+    "category": "Dessert",
+    "description": "Fluffy, round cakes made from batter, often served with syrup or toppings.",
+    "calories": "350",
+    "density": "0.8", // g/mL
+    "caloriesPerGram": "1.75", // Cal/g
   },
   "pizza": {
     "category": "Main",
     "description": "A flatbread topped with cheese, tomato sauce, and various toppings.",
     "calories": "266",
+    "density": "1.0", // g/mL
+    "caloriesPerGram": "2.66", // Cal/g
   },
   "spaghetti_bolognese": {
     "category": "Main",
     "description": "Spaghetti served with a meat-based tomato sauce.",
     "calories": "131",
+    "density": "0.9", // g/mL
+    "caloriesPerGram": "1.46", // Cal/g
   },
   "spaghetti_carbonara": {
     "category": "Main",
     "description": "Spaghetti served with a creamy egg and cheese sauce.",
     "calories": "157",
+    "density": "0.9", // g/mL
+    "caloriesPerGram": "1.74", // Cal/g
   },
   "waffles": {
     "category": "Dessert",
     "description": "A crisp, patterned batter cake, often served with toppings.",
     "calories": "291",
+    "density": "0.8", // g/mL
+    "caloriesPerGram": "1.82", // Cal/g
   },
 };
+
 
 // Function to get a readable list of predictions with their associated attributes
 Future<List<Map<String, String>>> getFormattedPredictionList(List<double> predictionValues) async {
@@ -120,6 +150,8 @@ Future<List<Map<String, String>>> getFormattedPredictionList(List<double> predic
       "category": attributes["category"]!,
       "description": attributes["description"]!,
       "calories": attributes["calories"]!,
+      "density": attributes["density"]!,
+      "caloriesPerGram": attributes["caloriesPerGram"]!,
       "prediction_value": predictionValue.toStringAsFixed(2),
     });
   });

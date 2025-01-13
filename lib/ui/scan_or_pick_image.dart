@@ -57,7 +57,7 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
     if (imagePath != null) {
       // Step 2: Create a multipart request using the correct key name expected by the server
       var uri = Uri.parse(
-          'https://api.muniza.fyi/infer/'); // Replace with your API URL
+          'https://api.muniza.fyi/infer'); // Replace with your API URL
       var request =
           http.MultipartRequest('POST', uri); // Assuming the method is POST
       // Step 3: Add the image to the request with the correct key name
@@ -90,7 +90,7 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
               predictions is List &&
               predictions.isNotEmpty) {
             // Flatten the predictions (the inner list is a single list of numbers)
-            List<double> predictionValues = List<double>.from(predictions[0]);
+            List<double> predictionValues = List<double>.from(predictions);
 
             classification = await getSortedPredictionMap(predictionValues);
             return 0;
@@ -104,6 +104,7 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
       } catch (e) {
         // Catch any errors that might occur during the request
         // print('Error during request: $e');
+        AppLogger.instance.e("Error: Request to API inference", error: e);
       }
 
       // // Read image bytes from file
@@ -169,8 +170,7 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
     return Stack(
       children: [
         Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(colors: primaryBackgroundGradient)),
+          decoration: BoxDecoration(),
           child: FutureBuilder<void>(
             future: _initializeControllerFuture,
             builder: (context, snapshot) {
@@ -286,9 +286,15 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
                               iconSize: 40,
                               padding: const EdgeInsets.all(20),
                             ),
+                            SizedBox(
+                              height: 10,
+                            ),
                             const Divider(
                               indent: 100,
                               endIndent: 100,
+                            ),
+                            SizedBox(
+                              height: 10,
                             ),
                             TextButton(
                                 onPressed: () async {

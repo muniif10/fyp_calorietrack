@@ -1,8 +1,12 @@
 import 'package:calorie_track/helper/database.dart';
 import 'package:calorie_track/helper/logger.dart';
 import 'package:calorie_track/model/meal.dart';
+import 'package:calorie_track/ui/cards/graph.dart';
 import 'package:calorie_track/ui/cards/meals_eaten_card.dart';
+import 'package:calorie_track/ui/setting_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../ui/const.dart';
@@ -82,29 +86,95 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    setupSettings();
     mealHistoryFuture = getMealsHistory();
+  }
+
+  Future<void> setupSettings() async {
+    // Get an instance of SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Check if the value already exists
+    bool exists = prefs.containsKey('cal_limit');
+    if (!exists) {
+      // Set the default data if it does not exist
+      await prefs.setInt('cal_limit', 2000);
+      print('Default data has been saved.');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Home"),
-        backgroundColor: secondaryBackgroundGradient[0],
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          width: MediaQuery.sizeOf(context).width,
-          height: MediaQuery.sizeOf(context).height,
-          decoration: BoxDecoration(
-              gradient: LinearGradient(colors: primaryBackgroundGradient)),
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 200,
+                  child: Row(
+                    children: [
+                      Text(
+                        "Home",
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: primaryText),
+                      ),
+                      Expanded(child: SizedBox.shrink()),
+        
+                      // Settings
+                      IconButton(
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SettingPage(),
+                            ));
+                          },
+                          icon: Icon(
+                            Icons.settings,
+                            color: primaryText,
+                          )),
+        
+                      // Logout
+                      IconButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text("Do you want to logout?"),
+                                content: Text(
+                                    "Logging out will require you to log in again after this."),
+                                actions: [
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        FirebaseAuth.instance.signOut();
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("Yes")),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("No"))
+                                ],
+                              ),
+                            );
+                          },
+                          icon: Icon(Icons.exit_to_app))
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                CalorieGraph(),
+                SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  height: 300,
                   child: MealsEatenCard(mealsFuture: mealHistoryFuture),
                 ),
                 const SizedBox(

@@ -12,7 +12,8 @@ class MealsEatenCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle header = const TextStyle(fontWeight: FontWeight.bold);
+    TextStyle header =
+        const TextStyle(fontWeight: FontWeight.bold, color: primaryText);
 
     return FutureBuilder(
       future: mealsFuture,
@@ -70,7 +71,7 @@ class MealsEatenCard extends StatelessWidget {
               children: [
                 Text(getHumanReadableName(meal.foodName)),
                 Text(meal.portion.toString()),
-                Text(meal.calorieInput.toString()),
+                Text(meal.calorieInput.toInt().toString()),
               ],
             );
           }).toList());
@@ -79,8 +80,14 @@ class MealsEatenCard extends StatelessWidget {
         // Final Table Widget
         return Container(
           decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                    blurRadius: 8,
+                    color: Colors.black.withOpacity(.1),
+                    offset: const Offset(0, 2))
+              ],
               borderRadius: BorderRadius.circular(8),
-              gradient: LinearGradient(colors: secondaryBackgroundGradient)),
+              gradient: LinearGradient(colors: primaryBackgroundGradient)),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -88,12 +95,28 @@ class MealsEatenCard extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      color: Colors.blue[300],
+                      boxShadow: [
+                        BoxShadow(
+                            offset: Offset(0, 2),
+                            blurRadius: 5,
+                            color: Colors.black.withOpacity(0.1))
+                      ],
+                      gradient:
+                          LinearGradient(colors: primaryBackgroundGradient),
                       borderRadius: BorderRadius.circular(8)),
                   child: const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text("Meals today"),
+                    child: Text(
+                      "Today's Meals",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: primaryText),
+                    ),
                   ),
+                ),
+                SizedBox(
+                  height: 5,
                 ),
                 Table(
                   columnWidths: const {

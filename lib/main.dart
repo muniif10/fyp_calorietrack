@@ -1,10 +1,20 @@
 import 'package:calorie_track/ui/history_page.dart';
 import 'package:calorie_track/ui/home_page.dart';
+import 'package:calorie_track/ui/login_page.dart';
 import 'package:calorie_track/ui/scan_or_pick_image.dart';
+import 'package:calorie_track/ui/test_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MainApp());
 }
 
@@ -16,7 +26,17 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  void handleBottomNavigation(int value) {}
+  bool _isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAuth.instance.userChanges().listen((User? user) {
+      setState(() {
+        _isLoggedIn = user != null; // Update state based on user authentication
+      });
+    });
+  }
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   int pageIndex = 0;
@@ -53,14 +73,22 @@ class _MainAppState extends State<MainApp> {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue[600]!)),
       color: Colors.blue[400],
       debugShowCheckedModeBanner: false,
-      home: SafeArea(
-        child: Scaffold(
-          bottomNavigationBar: bottomNavigationBar,
-          key: scaffoldKey,
-          body: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: _getPageForIndex(pageIndex),
-          ),
+      home: Container(
+        color: Colors.white,
+        child: SafeArea(
+          child: Builder(builder: (context) {
+            if (!_isLoggedIn) {
+              return LoginPage();
+            }
+            return Scaffold(
+              bottomNavigationBar: bottomNavigationBar,
+              key: scaffoldKey,
+              body: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                child: _getPageForIndex(pageIndex),
+              ),
+            );
+          }),
         ),
       ),
     );
@@ -75,41 +103,5 @@ Widget _getPageForIndex(int pageIndex) {
       return const ScanOrPickImagePage(key: ValueKey(1));
     default:
       return const HistoryPage(key: ValueKey(2));
-  }
-}
-
-class Home extends StatefulWidget {
-  const Home({
-    super.key,
-  });
-
-  @override
-  State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  void showSuccessSnackBar(BuildContext ctx) {
-    ScaffoldMessenger.of(ctx).showSnackBar(
-      SnackBar(
-        content: const Text(
-          "The caloric detail of the food has been added!",
-          textAlign: TextAlign.center,
-        ),
-        behavior: SnackBarBehavior.floating,
-        showCloseIcon: true,
-        shape: const StadiumBorder(),
-        backgroundColor: Colors.green[800],
-        padding: const EdgeInsets.all(15),
-        margin: const EdgeInsets.all(30),
-        duration: const Duration(seconds: 5),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const SafeArea(
-      child: Placeholder(),
-    );
   }
 }
