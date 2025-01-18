@@ -97,7 +97,7 @@ class MealsEatenCard extends StatelessWidget {
                   decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                             blurRadius: 5,
                             color: Colors.black.withOpacity(0.1))
                       ],
@@ -115,7 +115,7 @@ class MealsEatenCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
                 Table(

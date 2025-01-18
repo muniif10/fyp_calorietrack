@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
     if (!exists) {
       // Set the default data if it does not exist
       await prefs.setInt('cal_limit', 2000);
-      print('Default data has been saved.');
+      AppLogger.instance.i('Default settings for calorie has been saved.');
     }
   }
 
@@ -116,23 +116,23 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   child: Row(
                     children: [
-                      Text(
+                      const Text(
                         "Home",
                         style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: primaryText),
                       ),
-                      Expanded(child: SizedBox.shrink()),
+                      const Expanded(child: SizedBox.shrink()),
         
                       // Settings
                       IconButton(
                           onPressed: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => SettingPage(),
+                              builder: (context) => const SettingPage(),
                             ));
                           },
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.settings,
                             color: primaryText,
                           )),
@@ -143,8 +143,8 @@ class _HomePageState extends State<HomePage> {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: Text("Do you want to logout?"),
-                                content: Text(
+                                title: const Text("Do you want to logout?"),
+                                content: const Text(
                                     "Logging out will require you to log in again after this."),
                                 actions: [
                                   ElevatedButton(
@@ -152,25 +152,25 @@ class _HomePageState extends State<HomePage> {
                                         FirebaseAuth.instance.signOut();
                                         Navigator.of(context).pop();
                                       },
-                                      child: Text("Yes")),
+                                      child: const Text("Yes")),
                                   ElevatedButton(
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
-                                      child: Text("No"))
+                                      child: const Text("No"))
                                 ],
                               ),
                             );
                           },
-                          icon: Icon(Icons.exit_to_app))
+                          icon: const Icon(Icons.exit_to_app))
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
-                CalorieGraph(),
-                SizedBox(
+                const CalorieGraph(),
+                const SizedBox(
                   height: 10,
                 ),
                 SizedBox(

@@ -68,7 +68,7 @@ BarChartGroupData makeGroupData(int x, double y,
             end: Alignment.topCenter),
         width: width,
         borderSide: isTouched
-            ? BorderSide(color: Colors.black)
+            ? const BorderSide(color: Colors.black)
             : const BorderSide(color: Colors.white, width: 0),
         backDrawRodData: BackgroundBarChartRodData(
           show: true,
@@ -129,7 +129,7 @@ class _CalorieGraphState extends State<CalorieGraph> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
                               "Weekly Calories",
                               style: TextStyle(
                                 color: primaryText,
@@ -141,7 +141,7 @@ class _CalorieGraphState extends State<CalorieGraph> {
                                 onPressed: () {
                                   setState(() {});
                                 },
-                                icon: Icon(Icons.replay_outlined))
+                                icon: const Icon(Icons.replay_outlined))
                           ],
                         ),
                         const SizedBox(height: 10),
@@ -175,7 +175,7 @@ class _CalorieGraphState extends State<CalorieGraph> {
           tooltipHorizontalAlignment: FLHorizontalAlignment.right,
           tooltipMargin: -10,
           getTooltipItem: (group, groupIndex, rod, rodIndex) {
-            return BarTooltipItem("Calories: ", TextStyle(), children: [
+            return BarTooltipItem("Calories: ", const TextStyle(), children: [
               TextSpan(
                   text: (rod.toY - 1).toString(),
                   style: const TextStyle(fontWeight: FontWeight.bold))
@@ -186,12 +186,12 @@ class _CalorieGraphState extends State<CalorieGraph> {
       barGroups: showingGroups(calLimit),
       gridData: const FlGridData(show: false),
       borderData: FlBorderData(show: false),
-      titlesData: FlTitlesData(
+      titlesData: const FlTitlesData(
         show: true,
-        rightTitles: const AxisTitles(
+        rightTitles: AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
-        topTitles: const AxisTitles(
+        topTitles: AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
         bottomTitles: AxisTitles(
@@ -201,7 +201,7 @@ class _CalorieGraphState extends State<CalorieGraph> {
             reservedSize: 38,
           ),
         ),
-        leftTitles: const AxisTitles(
+        leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: false,
           ),
@@ -216,7 +216,7 @@ class _CalorieGraphState extends State<CalorieGraph> {
 
     DateTime now = DateTime.now();
     DateTime startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-    DateTime endOfWeek = startOfWeek.add(Duration(days: 6));
+    DateTime endOfWeek = startOfWeek.add(const Duration(days: 6));
 
     List<double> tempCalories = List.filled(7, 0.0);
 

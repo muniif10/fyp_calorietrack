@@ -18,25 +18,34 @@ class AddFoodPage extends StatefulWidget {
   State<AddFoodPage> createState() => _AddFoodPageState();
 }
 
-void showSuccessSnackBar(BuildContext ctx) {
+void showSuccessSnackBar(BuildContext ctx, String msg, int type) {
+  ScaffoldMessenger.of(ctx).removeCurrentSnackBar();
   ScaffoldMessenger.of(ctx).showSnackBar(
     SnackBar(
-      content: const Text(
-        "The caloric detail of the food has been added!",
+      content: Text(
+        msg,
         textAlign: TextAlign.center,
       ),
-      behavior: SnackBarBehavior.floating,
+      behavior: SnackBarBehavior.fixed,
       showCloseIcon: true,
-      shape: const StadiumBorder(),
-      backgroundColor: Colors.green[800],
+      // shape: const StadiumBorder(),
+      backgroundColor: type == 1 ? Colors.green[800] : Colors.grey[700],
       padding: const EdgeInsets.all(15),
-      margin: const EdgeInsets.all(30),
-      duration: const Duration(seconds: 5),
+      // margin: const EdgeInsets.all(30),
+      duration: const Duration(
+          seconds:
+              4), // Set a longer duration to let the fade-out effect happen
     ),
   );
 }
 
 class _AddFoodPageState extends State<AddFoodPage> {
+  final List<String> items = [
+    "1. Select the thumb which is used for approximation",
+    "2. Select multiple part of the food",
+    "3. Press confirm to perform the calorie prediction or clear selection to reselect everything",
+    // Add more items as needed
+  ];
   List<Offset> coordinates = [];
   double portionSliderValue = 1;
   double predictedCalorie = 0;
@@ -58,6 +67,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
     return sortedList;
   }
 
+  /// Returns 1 if user selected appropriate amount of points in the dialogue, else return -1
   Future<int> _showPointSelector(BuildContext context, String imagePath) async {
     final selectedPoints = await showDialog<List<Offset>>(
       context: context,
@@ -104,8 +114,8 @@ class _AddFoodPageState extends State<AddFoodPage> {
       if (streamedResponse.statusCode == 200) {
         var responseBody = await streamedResponse.stream.bytesToString();
         Map<String, dynamic> responseMap = jsonDecode(responseBody);
-        double vol_pred_double = responseMap['food_volume_cm3'];
-        int foodVolPrediction = vol_pred_double.toInt();
+        double volPredDouble = responseMap['food_volume_cm3'];
+        int foodVolPrediction = volPredDouble.toInt();
         return foodVolPrediction;
       } else {
         failCallback();
@@ -160,7 +170,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                               Text(
                                 getHumanReadableName(entry.key),
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: primaryText),
                               ),
@@ -187,50 +197,99 @@ class _AddFoodPageState extends State<AddFoodPage> {
                       ),
                       TextButton(
                         onPressed: () async {
-                          int stat = await _showPointSelector(
-                              context, widget.imagePath!);
-                          if (stat == 1) {
-                            var predictVol = await performPortionPrediction(
-                                widget.imagePath!, () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Text("Connection Error"),
-                                  content: Text(
-                                      "Couldn't connect to the backend, please try again later."),
+                          // Show the first dialog to check before proceeding
+                          var isDialogConfirmed = await showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text("Predicting Meal Calorie"),
+                              content: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize
+                                    .min, // This ensures the column takes only the space needed by its children
+                                children: items.map((e) => Text(e)).toList(),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(
+                                        false); // Close dialog with 'false' to indicate not ready
+                                  },
+                                  child: const Text("Cancel"),
                                 ),
-                              );
-                            });
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(
+                                        true); // Close dialog with 'true' to indicate ready
+                                  },
+                                  child: const Text("Proceed"),
+                                ),
+                              ],
+                            ),
+                          );
 
-                            if (predictVol != -1) {
-                              double density = double.parse(
-                                  labelAttributes[entry.key]?["density"] ??
-                                      "0");
-                              double caloriesPerGram = double.parse(
-                                  labelAttributes[entry.key]
-                                          ?["caloriesPerGram"] ??
-                                      "0");
-                              predictedCalorie =
-                                  predictVol * density * caloriesPerGram;
+                          // Check if the first dialog was confirmed (i.e., user pressed 'Proceed')
+                          if (context.mounted) {
+                            if (isDialogConfirmed == true) {
+                              int stat = await _showPointSelector(
+                                  context, widget.imagePath!);
+                              if (stat == 1) {
+                                if (context.mounted) {
+                                  showSuccessSnackBar(
+                                      context, "Predicting...", 0);
+                                }
+                                var predictVol = await performPortionPrediction(
+                                    widget.imagePath!, () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => const AlertDialog(
+                                      title: Text("Connection Error"),
+                                      content: Text(
+                                          "Couldn't connect to the backend, please try again later."),
+                                    ),
+                                  );
+                                });
 
-                              setState(() {
-                                this.predictedCalorie = predictedCalorie;
-                                this.totalCalorie = predictedCalorie;
-                                usePredictedCalories = true;
-                              });
+                                if (predictVol != -1) {
+                                  double density = double.parse(
+                                      labelAttributes[entry.key]?["density"] ??
+                                          "0");
+                                  double caloriesPerGram = double.parse(
+                                      labelAttributes[entry.key]
+                                              ?["caloriesPerGram"] ??
+                                          "0");
+                                  predictedCalorie =
+                                      predictVol * density * caloriesPerGram;
+                                  if (context.mounted) {
+                                    showSuccessSnackBar(context,
+                                        "Calorie prediction completed", 1);
+                                  }
+
+                                  setState(() {
+                                    predictedCalorie = predictedCalorie;
+                                    this.totalCalorie = predictedCalorie;
+                                    usePredictedCalories = true;
+                                  });
+                                } else {
+                                  if (context.mounted) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => const AlertDialog(
+                                        title: Text("Unexpected prediction"),
+                                        content: Text(
+                                            "Please try again later and select the food properly."),
+                                      ),
+                                    );
+                                  }
+                                }
+                              }
                             } else {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Text("Unexpected prediction"),
-                                  content: Text(
-                                      "Please try again later and select the food properly."),
-                                ),
-                              );
+                              // If the user pressed 'Cancel' or closed the dialog, we don't proceed
+                              AppLogger.instance
+                                  .i("User cancelled the prediction.");
                             }
                           }
                         },
-                        child: Text("Predict portion"),
+                        child: const Text("Predict portion"),
                       )
                     ],
                   ),
@@ -264,7 +323,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             "${usePredictedCalories ? predictedCalorie.round() : totalCalorie.round()} kcal",
-                            style: TextStyle(color: primaryText),
+                            style: const TextStyle(color: primaryText),
                           ),
                         ),
                       )
@@ -295,13 +354,17 @@ class _AddFoodPageState extends State<AddFoodPage> {
                       usePredictedCalories
                           ? addMeal(
                               entry,
-                              (predictedCalorie / initialCalories).toInt(),
+                              (predictedCalorie / initialCalories).toInt() == 0
+                                  ? 1
+                                  : (predictedCalorie / initialCalories)
+                                      .toInt(),
                               predictedCalorie,
                               widget.imagePath!)
                           : addMeal(entry, portionSliderValue.toInt(),
                               totalCalorie, widget.imagePath!);
 
-                      showSuccessSnackBar(context);
+                      showSuccessSnackBar(context,
+                          "The meal has been added to your history!", 1);
                       Navigator.of(context).pop();
                     },
                     child: const Text("Add this meal"),

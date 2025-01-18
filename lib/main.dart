@@ -2,11 +2,9 @@ import 'package:calorie_track/ui/history_page.dart';
 import 'package:calorie_track/ui/home_page.dart';
 import 'package:calorie_track/ui/login_page.dart';
 import 'package:calorie_track/ui/scan_or_pick_image.dart';
-import 'package:calorie_track/ui/test_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -78,7 +76,7 @@ class _MainAppState extends State<MainApp> {
         child: SafeArea(
           child: Builder(builder: (context) {
             if (!_isLoggedIn) {
-              return LoginPage();
+              return const LoginPage();
             }
             return Scaffold(
               bottomNavigationBar: bottomNavigationBar,

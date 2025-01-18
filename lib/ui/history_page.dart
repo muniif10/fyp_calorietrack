@@ -3,7 +3,6 @@ import 'package:calorie_track/helper/meal_helpers.dart';
 import 'package:calorie_track/helper/logger.dart';
 import 'package:calorie_track/helper/database.dart';
 import 'package:calorie_track/model/meal.dart';
-import 'package:calorie_track/ui/const.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -47,7 +46,7 @@ class _HistoryPageState extends State<HistoryPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Past Meals List",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),

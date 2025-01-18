@@ -24,14 +24,13 @@ class _SettingPageState extends State<SettingPage> {
     }
   }
 
-  Future<void> setSettings(int cal_limit) async {
+  Future<void> setSettings(int calLimit) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt("cal_limit", cal_limit);
+    prefs.setInt("cal_limit", calLimit);
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getSettings();
   }
@@ -42,7 +41,7 @@ class _SettingPageState extends State<SettingPage> {
     calControl.text = calLimit.toString();
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
       ),
       child: SafeArea(
@@ -51,7 +50,7 @@ class _SettingPageState extends State<SettingPage> {
             onPressed: () {
               setSettings(int.parse(calControl.text));
             },
-            child: Icon(Icons.save),
+            child: const Icon(Icons.save),
           ),
           body: SingleChildScrollView(
             child: Padding(
@@ -59,15 +58,24 @@ class _SettingPageState extends State<SettingPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Settings",
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: primaryText),
+                  Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          icon: const Icon(Icons.arrow_back)),
+                      const Text(
+                        "Settings",
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: primaryText),
+                      ),
+                    ],
                   ),
                   ListTile(
-                    title: Text("Calorie Limit"),
+                    title: const Text("Calorie Limit"),
                     trailing: SizedBox(
                       width: 150,
                       child: TextField(

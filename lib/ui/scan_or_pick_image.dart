@@ -33,6 +33,8 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
 
   ImageClassificationHelper? imageClassificationHelper;
 
+  
+
   void cleanResult() {
     imagePath = null;
     image = null;
@@ -170,7 +172,7 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
     return Stack(
       children: [
         Container(
-          decoration: BoxDecoration(),
+          decoration: const BoxDecoration(),
           child: FutureBuilder<void>(
             future: _initializeControllerFuture,
             builder: (context, snapshot) {
@@ -286,14 +288,14 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
                               iconSize: 40,
                               padding: const EdgeInsets.all(20),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             const Divider(
                               indent: 100,
                               endIndent: 100,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             TextButton(

@@ -7,6 +7,8 @@ class ImagePageWidget extends StatefulWidget {
   final String imagePath;
   final Function(List<Offset> coordinates)? onCoordinatesSelected;
 
+
+
   const ImagePageWidget({
     super.key,
     required this.imagePath,
@@ -36,7 +38,7 @@ class _ImagePageWidgetState extends State<ImagePageWidget> {
 
   Future<void> _loadImageDimensions() async {
     final image = FileImage(File(widget.imagePath));
-    final config = ImageConfiguration();
+    const config = ImageConfiguration();
     final completer = Completer<void>();
 
     image.resolve(config).addListener(
@@ -128,13 +130,13 @@ class _ImagePageWidgetState extends State<ImagePageWidget> {
                   onPressed: () {
                     selectedPoints.clear();
                   },
-                  child: Text("Clear selections")),
+                  child: const Text("Clear selections")),
               ElevatedButton(
                   onPressed: () {
                     if (selectedPoints.length < 2) {
                       showDialog(
                         context: context,
-                        builder: (context) => AlertDialog(
+                        builder: (context) => const AlertDialog(
                           title: Text("You did not select at least two points"),
                           content: Text(
                               "Select the thumb first and then select any number of points of the food."),
@@ -146,7 +148,7 @@ class _ImagePageWidgetState extends State<ImagePageWidget> {
                       Navigator.of(context).pop(selectedPoints);
                     }
                   },
-                  child: Text("Confirm")),
+                  child: const Text("Confirm")),
             ],
           )
         ],
