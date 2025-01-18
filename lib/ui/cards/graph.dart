@@ -1,4 +1,5 @@
 import 'package:calorie_track/helper/database.dart';
+import 'package:calorie_track/model/meal.dart';
 import 'package:calorie_track/ui/const.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -211,9 +212,9 @@ class _CalorieGraphState extends State<CalorieGraph> {
   }
 
   Future<void> fetchWeeklyCalories() async {
-    DatabaseHelper dbHelper = DatabaseHelper.instance;
-    List<Map<String, dynamic>> meals = await dbHelper.getMeals();
-
+  FirestoreHelper db = FirestoreHelper();
+  // Subscribe to the stream and calculate weekly calories based on meal dates
+  db.mealsStream().listen((meals) {
     DateTime now = DateTime.now();
     DateTime startOfWeek = now.subtract(Duration(days: now.weekday - 1));
     DateTime endOfWeek = startOfWeek.add(const Duration(days: 6));
@@ -221,18 +222,21 @@ class _CalorieGraphState extends State<CalorieGraph> {
     List<double> tempCalories = List.filled(7, 0.0);
 
     for (var meal in meals) {
-      DateTime mealDate = DateTime.parse(meal['insertion_date']);
+      DateTime mealDate = DateTime.parse(meal.insertionDate);
       if (mealDate.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
           mealDate.isBefore(endOfWeek.add(const Duration(days: 1)))) {
         int dayIndex = mealDate.weekday - 1;
-        tempCalories[dayIndex] += meal['calorie_input'];
+        tempCalories[dayIndex] += meal.calorieInput;
       }
     }
 
+    // Update the state (assuming you are in a StatefulWidget)
     setState(() {
       weeklyCalories = tempCalories;
     });
-  }
+  });
+}
+
 
   @override
   void initState() {

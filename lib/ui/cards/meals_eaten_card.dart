@@ -4,7 +4,7 @@ import 'package:calorie_track/ui/const.dart';
 import 'package:flutter/material.dart';
 
 class MealsEatenCard extends StatelessWidget {
-  final Future<List<Meal>> mealsFuture;
+  final Stream<List<Meal>> mealsFuture;
   const MealsEatenCard({
     super.key,
     required this.mealsFuture,
@@ -15,8 +15,8 @@ class MealsEatenCard extends StatelessWidget {
     TextStyle header =
         const TextStyle(fontWeight: FontWeight.bold, color: primaryText);
 
-    return FutureBuilder(
-      future: mealsFuture,
+    return StreamBuilder(
+      stream: mealsFuture,
       builder: (context, snapshot) {
         // Loading state
         if (snapshot.connectionState == ConnectionState.waiting) {

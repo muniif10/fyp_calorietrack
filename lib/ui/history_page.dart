@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:calorie_track/helper/meal_helpers.dart';
 import 'package:calorie_track/helper/logger.dart';
@@ -13,25 +14,14 @@ class HistoryPage extends StatefulWidget {
   State<HistoryPage> createState() => _HistoryPageState();
 }
 
-Future<List<Meal>> getMealsHistory() async {
-  DatabaseHelper db = DatabaseHelper.instance;
-  List<Map<String, dynamic>> out;
-  try {
-    out = await db.getMeals(); // Fetch meals from DB
-  } on DatabaseException catch (e) {
-    // Log the error (optional)
-    AppLogger.instance.e("Database error:", error: e);
-    return []; // Return an empty list if there's an exception
-  }
-
-  // Convert the database results (List<Map<String, dynamic>>) to a List<Meal>
-  List<Meal> history = out.map((mealData) => Meal.fromMap(mealData)).toList();
-
-  return history;
+Stream<List<Meal>> getMealsHistory() {
+  FirestoreHelper db = FirestoreHelper();
+  // Directly return the stream of meals
+  return db.mealsStream();
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  late Future<List<Meal>> mealHistoryFuture;
+  late Stream<List<Meal>> mealHistoryFuture;
   @override
   void initState() {
     super.initState();
@@ -50,8 +40,8 @@ class _HistoryPageState extends State<HistoryPage> {
               "Past Meals List",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            FutureBuilder<List<Meal>>(
-              future: mealHistoryFuture, // Pass the Future
+            StreamBuilder(
+              stream: mealHistoryFuture, // Pass the Future
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   // While waiting for the data, show a loading indicator
@@ -74,9 +64,9 @@ class _HistoryPageState extends State<HistoryPage> {
                           leading: ClipRRect(
                             borderRadius: BorderRadius.circular(
                                 8), // Optional: If you want rounded corners for the image
-                            child: Image.file(
-                              File(history[index]
-                                  .imagePath), // Assuming you store the image URL or local path in 'imagePath'
+                            child: Image.memory(
+                              base64Decode(history[index]
+                                  .imageBase64), // Assuming you store the image URL or local path in 'imagePath'
                               width: 50, // Set a fixed width for the image
                               height: 50, // Set a fixed height for the image
                               fit: BoxFit

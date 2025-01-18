@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:calorie_track/helper/database.dart';
@@ -33,13 +34,14 @@ class _AddFoodPageState extends State<AddFoodPage> {
 
   void addMeal(MapEntry<String, double> entry, int portion, double calories,
       String imagePath) {
-    DatabaseHelper db = DatabaseHelper.instance;
-    db.insertMeal(Meal(
+    // DatabaseHelper db = DatabaseHelper.instance;
+    FirestoreHelper db = FirestoreHelper();
+    db.addMeal(Meal(
         foodName: entry.key,
         calorieInput: calories,
         portion: portion,
         insertionDate: DateTime.now().toIso8601String(),
-        imagePath: imagePath));
+        imageBase64: base64Encode(File(imagePath).readAsBytesSync())));
   }
 
   @override

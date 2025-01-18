@@ -64,24 +64,14 @@ class Indicator extends StatelessWidget {
 class _HomePageState extends State<HomePage> {
   int touchedIndex = -1;
   List<Meal> mealList = [];
-  Future<List<Meal>> getMealsHistory() async {
-    DatabaseHelper db = DatabaseHelper.instance;
-    List<Map<String, dynamic>> out;
-    try {
-      out = await db.getMeals(); // Fetch meals from DB
-    } on DatabaseException catch (e) {
-      // Log the error (optional)
-      AppLogger.instance.e("Database error:", error: e);
-      return []; // Return an empty list if there's an exception
-    }
+  Stream<List<Meal>> getMealsHistory() {
+  FirestoreHelper db = FirestoreHelper();
+  // Directly return the stream of meals
+  return db.mealsStream();
+}
 
-    // Convert the database results (List<Map<String, dynamic>>) to a List<Meal>
-    List<Meal> history = out.map((mealData) => Meal.fromMap(mealData)).toList();
 
-    return history;
-  }
-
-  late Future<List<Meal>> mealHistoryFuture;
+  late Stream<List<Meal>> mealHistoryFuture;
 
   @override
   void initState() {

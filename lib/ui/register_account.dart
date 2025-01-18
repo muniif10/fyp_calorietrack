@@ -12,14 +12,14 @@ class RegisterAccountPage extends StatefulWidget {
 
 class _RegisterAccountPageState extends State<RegisterAccountPage> {
   // Function to handle registration with email and password
-  void registerWithEmail(String email, String password) async {
+  Future<bool> registerWithEmail(String email, String password) async {
     // Check if email and password are not empty
     if (email.isEmpty || password.isEmpty) {
       // Show an error message if either field is empty
       showErrorMessage("Please fill in both email and password");
-      return;
+      return false;
     }
-    
+
     try {
       // Attempt to create the user with email and password
       await FirebaseAuth.instance
@@ -30,11 +30,14 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
 
       // FirebaseAuthException has various error codes we can check
       if (e.code == 'weak-password') {
-        showErrorMessage("The password is too weak. Please choose a stronger password.");
+        showErrorMessage(
+            "The password is too weak. Please choose a stronger password.");
       } else if (e.code == 'email-already-in-use') {
-        showErrorMessage("An account already exists with this email. Please log in.");
+        showErrorMessage(
+            "An account already exists with this email. Please log in.");
       } else if (e.code == 'invalid-email') {
-        showErrorMessage("The email address is not valid. Please enter a valid email.");
+        showErrorMessage(
+            "The email address is not valid. Please enter a valid email.");
       } else {
         // Catch all other errors
         showErrorMessage("Registration failed. Please try again later.");
@@ -44,6 +47,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
       AppLogger.instance.e("Unexpected Error: ", error: e);
       showErrorMessage("Something went wrong. Please try again.");
     }
+    return true;
   }
 
   // Function to display an error message using a snack bar
@@ -71,8 +75,8 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
 
     // Style for the header
     TextStyle headerStyle = const TextStyle(
-      fontWeight: FontWeight.bold, 
-      fontSize: 24, 
+      fontWeight: FontWeight.bold,
+      fontSize: 24,
       color: primaryText,
     );
 
@@ -97,7 +101,8 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
               TextField(
                 decoration: emailDecoration,
                 controller: emailController,
-                keyboardType: TextInputType.emailAddress, // Ensures keyboard is appropriate for emails
+                keyboardType: TextInputType
+                    .emailAddress, // Ensures keyboard is appropriate for emails
               ),
               const SizedBox(height: 20),
               const Text("Password"),
@@ -105,14 +110,22 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                 decoration: passwordDecoration,
                 controller: passwordController,
                 obscureText: true, // To obscure password text
-                keyboardType: TextInputType.visiblePassword, // Ensures password keyboard is shown
+                keyboardType: TextInputType
+                    .visiblePassword, // Ensures password keyboard is shown
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   // Trigger registration when button is pressed
-                  registerWithEmail(
+                  bool res = await registerWithEmail(
                       emailController.text, passwordController.text);
+                  if (context.mounted && res) {
+                    Navigator.of(context).pop();
+                    FirebaseAuth.instance.signInWithEmailAndPassword(
+                        email: emailController.text,
+                        password: passwordController.text);
+                  }
+                  
                 },
                 child: const Text("Register"),
               ),

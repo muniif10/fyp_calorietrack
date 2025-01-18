@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:calorie_track/helper/database.dart';
 import 'package:calorie_track/helper/logger.dart';
 import 'package:calorie_track/helper/meal_helpers.dart';
@@ -8,6 +9,7 @@ import 'package:calorie_track/ui/const.dart';
 import 'package:calorie_track/ui/prediction_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:image/image.dart' as img; // Import the image package
 
 class AddFoodPage extends StatefulWidget {
   const AddFoodPage({super.key, this.classification, this.imagePath});
@@ -82,16 +84,43 @@ class _AddFoodPageState extends State<AddFoodPage> {
     return -1;
   }
 
-  void addMeal(MapEntry<String, double> entry, int portion, double calories,
-      String imagePath) {
-    DatabaseHelper db = DatabaseHelper.instance;
-    db.insertMeal(Meal(
-        foodName: entry.key,
-        calorieInput: calories,
-        portion: portion,
-        insertionDate: DateTime.now().toIso8601String(),
-        imagePath: imagePath));
+
+void addMeal(MapEntry<String, double> entry, int portion, double calories, String imagePath) async {
+  FirestoreHelper db = FirestoreHelper();
+
+  // Read the image file
+  File imageFile = File(imagePath);
+  List<int> imageBytes = await imageFile.readAsBytes();
+
+  // Convert List<int> to Uint8List
+  Uint8List uint8ImageBytes = Uint8List.fromList(imageBytes);
+
+  // Decode the image to manipulate it
+  img.Image? originalImage = img.decodeImage(uint8ImageBytes);
+
+  if (originalImage != null) {
+    // Resize the image to a smaller dimension (e.g., 300x300) and compress to lower quality
+    // img.Image resizedImage = img.copyResize(originalImage, width: 300, height: 300);
+
+    // Convert the resized image back to bytes with a lower quality
+    List<int> compressedBytes = img.encodeJpg(originalImage, quality: 30); // Lower quality (0-100)
+
+    // Encode the compressed bytes to base64
+    String base64Image = base64Encode(compressedBytes);
+
+    // Add the meal with the compressed image
+    db.addMeal(Meal(
+      foodName: entry.key,
+      calorieInput: calories,
+      portion: portion,
+      insertionDate: DateTime.now().toIso8601String(),
+      imageBase64: base64Image,
+    ));
+  } else {
+    // Handle image decoding failure
+    print("Failed to decode the image.");
   }
+}
 
   Future<int> performPortionPrediction(
       String imagePath, Function failCallback) async {

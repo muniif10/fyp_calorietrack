@@ -1,16 +1,19 @@
+import 'dart:convert';
+import 'dart:io';
+
 class Meal {
   final String foodName;
   final String insertionDate;
   final double calorieInput;
   final int portion;
-  final String imagePath;
+  final String imageBase64;
 
   Meal({
     required this.foodName,
     required this.insertionDate,
     required this.calorieInput,
     required this.portion,
-    required this.imagePath,
+    required this.imageBase64,
   }) {
     if (foodName.isEmpty) {
       throw ArgumentError('Food name cannot be empty');
@@ -23,13 +26,25 @@ class Meal {
     }
   }
 
+  // Encode the image file to base64
+  static Future<String> encodeImageToBase64(String imagePath) async {
+    File imageFile = File(imagePath);
+    List<int> imageBytes = await imageFile.readAsBytes();
+    return base64Encode(imageBytes);
+  }
+
+  // Decode base64 to image bytes (if needed for display)
+  static List<int> decodeBase64ToImage(String base64String) {
+    return base64Decode(base64String);
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'food_name': foodName,
       'insertion_date': insertionDate,
       'calorie_input': calorieInput,
       'portion': portion,
-      'image_path': imagePath,
+      'image_base64': imageBase64,
     };
   }
 
@@ -39,7 +54,7 @@ class Meal {
       insertionDate: map['insertion_date'],
       calorieInput: map['calorie_input'],
       portion: map['portion'],
-      imagePath: map['image_path'],
+      imageBase64: map['image_base64'],
     );
   }
 }
