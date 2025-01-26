@@ -46,6 +46,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
     "1. Select the thumb which is used for approximation",
     "2. Select multiple part of the food",
     "3. Press confirm to perform the calorie prediction or clear selection to reselect everything",
+    "Notice: Calorie estimation may not 100% accurate and may be different from the actual calorie."
     // Add more items as needed
   ];
   List<Offset> coordinates = [];

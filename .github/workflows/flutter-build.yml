@@ -1,0 +1,54 @@
+name: Flutter Build
+
+on:
+  push:
+    branches:
+      - main # or any branch you want to trigger the build
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest # Required for iOS builds
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Flutter environment
+      - name: Flutter action
+        uses: subosito/flutter-action@v2.18.0
+        with:
+          flutter-version: '3.24.4' # Specify the Flutter version you want
+
+      # Install dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Build APK for Android
+      - name: Build APK
+        run: flutter build apk --release
+        if: runner.os == 'Linux'
+
+      # Build iOS IPA (this step requires a MacOS runner)
+      - name: Build iOS IPA
+        run: |
+          flutter build ios --release --no-codesign
+        if: runner.os == 'macos-latest'
+
+      # Optionally, upload build artifacts (APK or IPA)
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: flutter-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+        if: runner.os == 'Linux'
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v3
+        with:
+          name: flutter-ipa
+          path: build/ios/iphoneos/Runner.app
+        if: runner.os == 'macos-latest'

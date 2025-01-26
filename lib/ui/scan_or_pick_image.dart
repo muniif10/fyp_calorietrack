@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:calorie_track/helper/meal_helpers.dart';
 import 'package:http/http.dart' as http;
-import 'package:calorie_track/helper/image_classifier_helper.dart';
 import 'package:calorie_track/helper/logger.dart';
 import 'package:calorie_track/ui/add_food_page.dart';
 import 'package:calorie_track/ui/const.dart';
@@ -31,7 +30,6 @@ class _ScanOrPickImagePageState extends State<ScanOrPickImagePage> {
   late Future<void> _initializeControllerFuture;
   bool _isLoading = false;
 
-  ImageClassificationHelper? imageClassificationHelper;
 
   
 
