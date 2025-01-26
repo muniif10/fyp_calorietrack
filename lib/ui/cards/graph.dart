@@ -1,5 +1,4 @@
 import 'package:calorie_track/helper/database.dart';
-import 'package:calorie_track/model/meal.dart';
 import 'package:calorie_track/ui/const.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -149,8 +148,7 @@ class _CalorieGraphState extends State<CalorieGraph> {
                         Expanded(
                           child: BarChart(
                             calorieBarData(calLimit),
-                            swapAnimationCurve: Easing.standard,
-                            swapAnimationDuration:
+                            duration:
                                 const Duration(milliseconds: 500),
                           ),
                         ),
@@ -172,9 +170,12 @@ class _CalorieGraphState extends State<CalorieGraph> {
     return BarChartData(
       barTouchData: BarTouchData(
         touchTooltipData: BarTouchTooltipData(
+          fitInsideHorizontally: true,
+          fitInsideVertically: true,
           getTooltipColor: (_) => Colors.white,
-          tooltipHorizontalAlignment: FLHorizontalAlignment.right,
+          tooltipHorizontalAlignment: FLHorizontalAlignment.center,
           tooltipMargin: -10,
+
           getTooltipItem: (group, groupIndex, rod, rodIndex) {
             return BarTooltipItem("Calories: ", const TextStyle(), children: [
               TextSpan(

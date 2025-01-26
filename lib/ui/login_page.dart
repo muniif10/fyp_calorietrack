@@ -23,7 +23,8 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       // Attempt to sign in with the provided email and password
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (e) {
       // Handle FirebaseAuthException to display specific error messages to the user
       AppLogger.instance.e("Error: Logging in", error: e);
@@ -34,7 +35,8 @@ class _LoginPageState extends State<LoginPage> {
       } else if (e.code == 'wrong-password') {
         showErrorMessage("Incorrect password. Please try again.");
       } else if (e.code == 'invalid-email') {
-        showErrorMessage("The email address is invalid. Please check your email.");
+        showErrorMessage(
+            "The email address is invalid. Please check your email.");
       } else {
         // Handle all other errors
         showErrorMessage("Login failed. Please try again later.");
@@ -76,64 +78,81 @@ class _LoginPageState extends State<LoginPage> {
       color: primaryText,
     );
 
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(colors: primaryBackgroundGradient),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(
-                child: Text(
-                  "Login",
-                  style: headerStyle,
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: primaryBackgroundGradient),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Image.asset(
+                    "assets/images/icon.png",
+                    height: 100,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              const Text("Email"),
-              TextField(
-                decoration: emailDecoration,
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress, // Ensures the correct keyboard is displayed for emails
-                autofillHints: const [AutofillHints.email], // Suggests email autofill hints to the user
-              ),
-              const SizedBox(height: 20),
-              const Text("Password"),
-              TextField(
-                decoration: passwordDecoration,
-                controller: passwordController,
-                obscureText: true, // Ensures the password is obscured
-                keyboardType: TextInputType.visiblePassword, // Ensures the correct keyboard is displayed for password
-                autofillHints: const [AutofillHints.password], // Suggests password autofill hints to the user
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  // Call login function with provided email and password when the button is pressed
-                  loginWithUsernameAndPassword(
-                    emailController.text,
-                    passwordController.text,
-                  );
-                },
-                child: const Text("Login"),
-              ),
-              const SizedBox(height: 20),
-              const Divider(),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () {
-                  // Navigate to the registration page when the user clicks on 'Register'
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const RegisterAccountPage(),
-                  ));
-                },
-                child: const Text("Register a new account"),
-              ),
-            ],
+                const SizedBox(
+                  height: 10,
+                ),
+                Center(
+                  child: Text(
+                    "Login",
+                    style: headerStyle,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text("Email"),
+                TextField(
+                  decoration: emailDecoration,
+                  controller: emailController,
+                  keyboardType: TextInputType
+                      .emailAddress, // Ensures the correct keyboard is displayed for emails
+                  autofillHints: const [
+                    AutofillHints.email
+                  ], // Suggests email autofill hints to the user
+                ),
+                const SizedBox(height: 20),
+                const Text("Password"),
+                TextField(
+                  decoration: passwordDecoration,
+                  controller: passwordController,
+                  obscureText: true, // Ensures the password is obscured
+                  keyboardType: TextInputType
+                      .visiblePassword, // Ensures the correct keyboard is displayed for password
+                  autofillHints: const [
+                    AutofillHints.password
+                  ], // Suggests password autofill hints to the user
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    // Call login function with provided email and password when the button is pressed
+                    loginWithUsernameAndPassword(
+                      emailController.text,
+                      passwordController.text,
+                    );
+                  },
+                  child: const Text("Login"),
+                ),
+                const SizedBox(height: 20),
+                const Divider(),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    // Navigate to the registration page when the user clicks on 'Register'
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const RegisterAccountPage(),
+                    ));
+                  },
+                  child: const Text("Register a new account"),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,11 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:calorie_track/helper/meal_helpers.dart';
-import 'package:calorie_track/helper/logger.dart';
 import 'package:calorie_track/helper/database.dart';
 import 'package:calorie_track/model/meal.dart';
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});

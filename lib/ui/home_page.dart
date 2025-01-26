@@ -3,11 +3,11 @@ import 'package:calorie_track/helper/logger.dart';
 import 'package:calorie_track/model/meal.dart';
 import 'package:calorie_track/ui/cards/graph.dart';
 import 'package:calorie_track/ui/cards/meals_eaten_card.dart';
+import 'package:calorie_track/ui/healthy_dot.dart';
 import 'package:calorie_track/ui/setting_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart';
 
 import '../ui/const.dart';
 
@@ -65,11 +65,10 @@ class _HomePageState extends State<HomePage> {
   int touchedIndex = -1;
   List<Meal> mealList = [];
   Stream<List<Meal>> getMealsHistory() {
-  FirestoreHelper db = FirestoreHelper();
-  // Directly return the stream of meals
-  return db.mealsStream();
-}
-
+    FirestoreHelper db = FirestoreHelper();
+    // Directly return the stream of meals
+    return db.mealsStream();
+  }
 
   late Stream<List<Meal>> mealHistoryFuture;
 
@@ -114,7 +113,8 @@ class _HomePageState extends State<HomePage> {
                             color: primaryText),
                       ),
                       const Expanded(child: SizedBox.shrink()),
-        
+                      const HealthDotWidget(
+                          endpoint: 'https://api.muniza.fyi/health'),
                       // Settings
                       IconButton(
                           onPressed: () {
@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                             Icons.settings,
                             color: primaryText,
                           )),
-        
+
                       // Logout
                       IconButton(
                           onPressed: () {

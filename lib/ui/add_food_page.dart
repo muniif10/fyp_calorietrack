@@ -118,7 +118,8 @@ void addMeal(MapEntry<String, double> entry, int portion, double calories, Strin
     ));
   } else {
     // Handle image decoding failure
-    print("Failed to decode the image.");
+    // print("Failed to decode the image.");
+    AppLogger.instance.e("Failed to decode image.");
   }
 }
 
