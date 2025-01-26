@@ -43,8 +43,8 @@ void showSuccessSnackBar(BuildContext ctx, String msg, int type) {
 
 class _AddFoodPageState extends State<AddFoodPage> {
   final List<String> items = [
-    "1. Select the thumb which is used for approximation",
-    "2. Select multiple part of the food",
+    "1. Select the thumb once, which is used for approximation",
+    "2. Select the food any at any location of the food",
     "3. Press confirm to perform the calorie prediction or clear selection to reselect everything",
     "Notice: Calorie estimation may not 100% accurate and may be different from the actual calorie."
   ];
