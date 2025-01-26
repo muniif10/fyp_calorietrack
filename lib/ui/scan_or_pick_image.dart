@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:image_picker/image_picker.dart';
-
 import 'package:calorie_track/helper/meal_helpers.dart';
 import 'package:http/http.dart' as http;
 import 'package:calorie_track/helper/logger.dart';
