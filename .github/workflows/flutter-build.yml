@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest # Required for iOS builds
+    runs-on: ubuntu-latest # Required for iOS builds
 
     steps:
       # Checkout the repository
